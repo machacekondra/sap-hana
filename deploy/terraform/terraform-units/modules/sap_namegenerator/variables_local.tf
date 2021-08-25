@@ -252,6 +252,7 @@ variable "resource_suffixes" {
     "ppg"                  = "-ppg"
     "routetable"           = "route-table"
     "sapbits"              = "sapbits"
+    "sapmnt"               = "sapmnt"
     "storage_nic"          = "-storage-nic"
     "storage_subnet"       = "_storage-subnet"
     "storage_subnet_nsg"   = "_storageSubnet-nsg"
