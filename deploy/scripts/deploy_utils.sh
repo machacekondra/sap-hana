@@ -5,7 +5,19 @@
 #
 # Acknowledgements: Fergal Mc Carthy, SUSE
 #########################################################################
-
+#     (( )) -> math mode
+#     $# -> number of params
+#     ${#var_name} -> length of var_name
+#     ${#var_name[@]} -> count elements in the array
+#     : -> if condition
+#     ${varname:-<default_value>} -> if varname is null, use default_value
+#     ${varname:<default_value>} -> if varname is not null but empty string, use default_value
+#     ${varname:+<default_value>} -> if varname is not null and not empty string, use default_value
+#     ${varname:?<error_message>} -> if varname is null, print error_message and exit
+#     example: ${debug:+-d} or ${DEBUG:+--verbose}
+#     ${var:+ ${var}} -> if var is set, substitute with space and var value
+# Acknowledgements: Fergal Mc Carthy, SUSE
+#########################################################################
 function save_config_var() {
     local var_name=$1 var_file=$2
     sed -i -e "" -e /$var_name/d "${var_file}"
@@ -214,7 +226,7 @@ function set_executing_user_environment_variables() {
             echo -e "\t[set_executing_user_environment_variables]: Nothing to do"
             ;;
         "userAssignedIdentity")
-            echo -e "\t[set_executing_user_environment_variables]: logged in using User Assigned Identity: ($(az account))"
+            echo -e "\t[set_executing_user_environment_variables]: logged in using User Assigned Identity: '${az_exec_user_type}'"
             echo -e "\t[set_executing_user_environment_variables]: Nothing to do"
             ;;
         *)
@@ -223,7 +235,7 @@ function set_executing_user_environment_variables() {
                 az_user_obj_id=$(az ad sp show --id "${az_exec_user_name}" --query objectId -o tsv)
                 az_user_name=$(az ad sp show --id "${az_exec_user_name}" --query displayName -o tsv)
 
-                echo -e "\t[set_executing_user_environment_variables]: Identified login type as 'service principal'"
+                echo -e "\t$(s)[set_executing_user_environment_variables]: Identified login type as 'service principal'"
                 echo -e "\t[set_executing_user_environment_variables]: Initializing state with SPN named: ${az_user_name}"
 
                 if [ -z "$az_client_secret" ]; then
@@ -263,4 +275,11 @@ function unset_executing_user_environment_variables() {
     unset ARM_CLIENT_SECRET
 
 }
+# print the script name and function being called
+function print_script_name_and_function() {
+    echo -e "\t[$(basename "")]: $(basename "$0") $1"
+}
 
+#print the function name being executed
+#printf maybe instead of echo
+#printf "%s\n" "${FUNCNAME[@]}"

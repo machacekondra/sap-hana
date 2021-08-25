@@ -493,7 +493,8 @@ if [ 1 == $step ]; then
             answer=${ans^^}
             if [ "$answer" == 'Y' ]; then
                 allParams=$(printf " -e %s -r %s -v %s " "${environment}" "${region}" "${keyvault}" )
-                
+                #$allParams as an array (); array math can be done in shell, allowing dynamic parameter lists to be created
+                #"${allParams[@]}" - quotes all elements of the array
                 "${DEPLOYMENT_REPO_PATH}"/deploy/scripts/set_secrets.sh $allParams
                 if (($? > 0)); then
                     exit $?
