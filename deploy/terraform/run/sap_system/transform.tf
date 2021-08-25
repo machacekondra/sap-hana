@@ -78,7 +78,7 @@ locals {
     platform = try(coalesce(var.database_platform, try(var.databases[0].platform, "HANA")), "")
     size     = try(coalesce(var.database_size, try(var.databases[0].size, "")), "")
 
-    use_ANF   = var.HANA_use_ANF || try(var.databases[0].use_ANF, false)
+    use_ANF   = var.database_HANA_use_ANF_scaleout_scenario || try(var.databases[0].use_ANF, false)
     dual_nics = var.database_dual_nics || try(var.databases[0].dual_nics, false)
     no_ppg    = var.database_no_ppg || try(var.databases[0].no_ppg, false)
     no_avset  = var.database_no_avset || try(var.databases[0].no_avset, false)

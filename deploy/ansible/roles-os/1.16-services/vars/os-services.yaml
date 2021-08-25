@@ -35,6 +35,7 @@ services:
         - { tier: 'os',          service: 'firewalld',    node_tier: 'all',     state: 'disabled'  }
         - { tier: 'os',          service: 'nfs-server',   node_tier: 'scs',     state: 'started'   }
         - { tier: 'preparation', service: 'nfs-server',   node_tier: 'scs',     state: 'restarted' }
+        - { tier: 'ha',          service: 'pcsd',         node_tier: 'all',     state: 'started'   }
 
     suse12:
         - { tier: 'preparation', service: 'nfsserver',      node_tier: 'scs',     state: 'restarted'  }

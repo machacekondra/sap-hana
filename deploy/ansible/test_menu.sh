@@ -1,5 +1,7 @@
 #!/bin/bash
 
+export PATH=/opt/terraform/bin:/opt/ansible/bin:${PATH}
+
 cmd_dir="$(dirname "$(readlink -e "${BASH_SOURCE[0]}")")"
 
 
@@ -53,6 +55,7 @@ sap_sid="$(awk '$1 == "sap_sid:" {print $2}' ${sap_params_file})"
 export           ANSIBLE_HOST_KEY_CHECKING=False
 export           ANSIBLE_INVENTORY="${sap_sid}_hosts.yaml"
 export           ANSIBLE_PRIVATE_KEY_FILE=sshkey
+export           ANSIBLE_COLLECTIONS_PATHS=/opt/ansible/collections${ANSIBLE_COLLECTIONS_PATHS:+${ANSIBLE_COLLECTIONS_PATHS}}
 
 # We really should be determining the user dynamically, or requiring
 # that it be specified in the inventory settings (currently true)

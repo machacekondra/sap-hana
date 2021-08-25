@@ -305,7 +305,7 @@ variable "database_vm_nodes" {
   }]
 }
 
-variable "HANA_use_ANF" {
+variable "database_HANA_use_ANF_scaleout_scenario" {
   default = false
 }
 

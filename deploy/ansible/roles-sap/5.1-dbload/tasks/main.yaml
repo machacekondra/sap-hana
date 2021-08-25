@@ -40,10 +40,20 @@
     sap_appVirtualHostname:       
 
 
+
+
+
 # *====================================4=======================================8
 #   SAP DBLOAD: Install
 # 2230669 - System Provisioning Using a Parameter Input File
 #
+
+- name:               "SAP DBLOAD reset"
+  ansible.builtin.file: 
+    path: /etc/sap_deployment_automation/sap_deployment_dbload.txt
+    state: absent
+  when: reinstall == true 
+
 - name:               "SAP DBLOAD Install"
   ansible.builtin.shell: |
                       set -o errexit

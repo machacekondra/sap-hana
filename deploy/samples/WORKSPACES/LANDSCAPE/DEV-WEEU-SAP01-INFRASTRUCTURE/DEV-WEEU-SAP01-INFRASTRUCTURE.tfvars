@@ -64,7 +64,7 @@ network_address_space="10.110.0.0/16"
 # admin_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #admin_subnet_name=""
 
-# admin_subnet_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
+# admin_subnet_address_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
 admin_subnet_address_prefix="10.110.0.0/19"
 # admin_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
 #admin_subnet_arm_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/DEV-WEEU-SAP01-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/DEV-WEEU-SAP01-vnet/subnets/DEV-WEEU-SAP01-subnet_admin"
@@ -79,7 +79,7 @@ admin_subnet_address_prefix="10.110.0.0/19"
 # db_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #db_subnet_name=""
 
-# db_subnet_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
+# db_subnet_address_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
 db_subnet_address_prefix="10.110.96.0/19"
 
 # db_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use

@@ -41,7 +41,7 @@
       when: ansible_distribution_major_version == "7"
 
     - name: Ensure the cluster is created with a token large enough to allow memory preserving maintenance
-      ansible.builtin.shell: "pcs cluster setup {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} totem token {{ cluster_totem.token }}"
+      ansible.builtin.shell: "pcs cluster setup {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} totem token={{ cluster_totem.token }}"
       when: ansible_distribution_major_version == "8"
 
     - name: Ensure the cluster is starting on all nodes
@@ -53,7 +53,16 @@
       retries: 30
       delay: 10
       until: "'{{ primary_instance_name }} {{ secondary_instance_name }}' in cluster_stable_check.stdout or '{{ secondary_instance_name }} {{ primary_instance_name }}' in cluster_stable_check.stdout"
-    
+      when: ansible_distribution_major_version != "8"
+
+    - name: Wait until cluster has stabilised
+      ansible.builtin.shell: pcs status | grep '* Online:'
+      register: cluster_stable_check
+      retries: 30
+      delay: 10
+      until: "'{{ primary_instance_name }} {{ secondary_instance_name }}' in cluster_stable_check.stdout or '{{ secondary_instance_name }} {{ primary_instance_name }}' in cluster_stable_check.stdout"
+      when: ansible_distribution_major_version == "8"
+
     - name: Allow Concurrent Fencing 
       ansible.builtin.shell: pcs property set concurrent-fencing=true
   when: ansible_hostname == primary_instance_name 

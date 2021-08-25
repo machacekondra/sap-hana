@@ -67,8 +67,8 @@ network_name="SAP02"
 # admin_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #admin_subnet_name=""
 
-# admin_subnet_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
-#admin_subnet_prefix="10.1.1.0/24"
+# admin_subnet_address_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
+#admin_subnet_address_prefix="10.1.1.0/24"
 # admin_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
 #admin_subnet_arm_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/DEV-WEEU-SAP01-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/DEV-WEEU-SAP01-vnet/subnets/DEV-WEEU-SAP01-subnet_admin"
 
@@ -82,8 +82,8 @@ network_name="SAP02"
 # db_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #db_subnet_name=""
 
-# db_subnet_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
-#db_subnet_prefix="10.1.2.0/24"
+# db_subnet_address_prefix is a mandatory parameter if the subnets are not defined in the workload or if existing subnets are not used
+#db_subnet_address_prefix="10.1.2.0/24"
 
 # db_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
 #db_subnet_arm_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/DEV-WEEU-SAP01-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/DEV-WEEU-SAP01-vnet/subnets/DEV-WEEU-SAP01-subnet_db"
@@ -100,8 +100,8 @@ network_name="SAP02"
 # app_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #app_subnet_name=""
 
-# app_subnet_prefix is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
-#app_subnet_prefix="10.1.3.0/24"
+# app_subnet_address_prefix is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
+#app_subnet_address_prefix="10.1.3.0/24"
 
 # app_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
 #app_subnet_arm_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/DEV-WEEU-SAP01-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/DEV-WEEU-SAP01-vnet/subnets/DEV-WEEU-SAP01-subnet_app"
@@ -117,8 +117,8 @@ network_name="SAP02"
 # web_subnet_name is an optional parameter and should only be used if the default naming is not acceptable 
 #web_subnet_name=""
 
-# web_subnet_prefix is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
-#web_subnet_prefix="10.1.4.0/24"
+# web_subnet_address_prefix is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
+#web_subnet_address_prefix="10.1.4.0/24"
 
 # web_subnet_arm_id is an optional parameter that if provided specifies Azure resource identifier for the existing subnet to use
 #web_subnet_arm_id="/subscriptions/xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx/resourceGroups/DEV-WEEU-SAP01-INFRASTRUCTURE/providers/Microsoft.Network/virtualNetworks/DEV-WEEU-SAP01-vnet/subnets/DEV-WEEU-SAP01-subnet_web"

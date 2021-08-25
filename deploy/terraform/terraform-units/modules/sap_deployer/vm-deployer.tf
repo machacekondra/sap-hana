@@ -107,5 +107,5 @@ resource "azurerm_linux_virtual_machine" "deployer" {
     timeout     = var.ssh-timeout
   }
 
-   tags = local.tags
+  tags = local.tags
 }

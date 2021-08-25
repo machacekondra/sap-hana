@@ -62,23 +62,29 @@
       sap_hana_fencing_spn_client_pwd:           "{{ hostvars.localhost.sap_fencing_spn_pwd }}"
       sap_hana_fencing_spn_tenant_id:            "{{ hostvars.localhost.sap_fencing_spn_tenant_id }}"
 
-  # - block:
-  #     - include_role:
-  #         name:     roles-os/1.3-repository                             # Repo required for JQ package 
-  #   tags:
-  #     - 1.3-repository
+  - block:
+      - include_role:
+          name:     roles-os/1.3-repository                             # Repo required for JQ package 
+    tags:
+       - 1.3-repository
+ 
+  - block:
+      - include_role:
+          name:     roles-os/1.4-packages                               # Install the HA packages required for pacemaker
+    tags:
+      - 1.4-packages
+       
+  - block:
+      - include_role:
+          name:     roles-os/1.9-kernelparameters                       # Setup the kernel parameters required for pacemaker cluster VMs
+    tags:
+      - 1.9-kernelparameters
 
-  # - block:
-  #     - include_role:
-  #         name:     roles-os/1.4-packages                               # Install the HA packages required for pacemaker
-  #   tags:
-  #     - 1.4-packages
-      
-  # - block:
-  #     - include_role:
-  #         name:     roles-os/1.9-kernelparameters                       # Setup the kernel parameters required for pacemaker cluster VMs
-  #   tags:
-  #     - 1.9-kernelparameters
+  - block:
+    - include_role:
+          name:     roles-os/1.16-services
+    tags:
+      - 1.16-services
 
   - block:
       - include_role:
