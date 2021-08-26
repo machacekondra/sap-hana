@@ -122,9 +122,11 @@ pkg_mgr_init()
     case "$(get_distro_name)" in
     (ubuntu|debian)
         pkg_mgr="apt-get"
+        pkg_type="deb"
         ;;
     (sles|opensuse*)
         pkg_mgr="zypper"
+        pkg_type="rpm"
         ;;
     (*)
         error "Unsupported distibution: '$${distro_name}'"
@@ -271,12 +273,12 @@ sudo mkdir -p \
     $${tf_bin}
 wget -nv -O /tmp/$${tf_zip} https://releases.hashicorp.com/terraform/$${tfversion}/$${tf_zip}
 sudo unzip -o /tmp/$${tf_zip} -d $${tf_dir}
-sudo ln -vfs ../$(dirname $${tf_dir})/terraform $${tf_bin}/terraform
+sudo ln -vfs ../$(basename $${tf_dir})/terraform $${tf_bin}/terraform
 
 #
 # Install az cli using provided scripting
 #
-curl -sL https://aka.ms/InstallAzureCLI | sudo bash </dev/null
+curl -sL https://aka.ms/InstallAzureCLI${pkg_type^} | sudo bash
 
 #
 # Install latest Ansible revision of specified version for all users.

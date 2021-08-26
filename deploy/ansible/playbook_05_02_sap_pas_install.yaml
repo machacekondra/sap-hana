@@ -37,8 +37,11 @@
 # Description: 
 #              
 #
-  - include_role:
-      name:     roles-sap/5.2-pas-install
+  - block:
+      - include_role:
+          name:     roles-sap/5.2-pas-install
+    tags:
+      - 5.2-pas-install
 
 
 ...

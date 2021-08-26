@@ -29,27 +29,18 @@
     tags:
       - always
 
-# -------------------------------------+---------------------------------------8
-# Role: sap-mounts
-#
-# Description: Mount Filesystems
-#              Mount NFS Filesystems
-#
-  - include_role:
-      name:     roles-sap-os/2.6-sap-mounts
-# -------------------------------------+---------------------------------------8
 
+  - block:
+      - include_role:
+          name:     roles-sap-os/2.6-sap-mounts
+    tags:
+      - 2.6-sap-mounts
 
-
-# -------------------------------------+---------------------------------------8
-# Role: 5.1-dbload
-#
-# Description: 
-#              
-#
-  - include_role:
-      name:     roles-sap/5.1-dbload
-
+  - block:
+      - include_role:
+          name:     roles-sap/5.1-dbload
+    tags:
+      - 5.1-dbload
 
 ...
 # /*---------------------------------------------------------------------------8

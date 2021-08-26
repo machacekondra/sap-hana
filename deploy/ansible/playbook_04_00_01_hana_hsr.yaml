@@ -33,8 +33,11 @@
       secondary_instance_name: "{{ ansible_play_hosts_all[1] }}"                # Setting up Secondary Instance Name
 
 
-  - include_role:
-      name:     roles-db/4.0.1-hdb-hsr
+  - block:
+      - include_role:
+          name:     roles-db/4.0.1-hdb-hsr
+    tags:
+      - 4.0.1-hdb-hsr
       
 
 

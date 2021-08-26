@@ -26,11 +26,17 @@
   - ansible.builtin.set_fact:
       tier:     web                                                             # SAP Install phase: Web Dispatcher
 
-  - include_role:
-      name:     roles-sap-os/2.6-sap-mounts
+  - block:
+      - include_role:
+          name:     roles-sap-os/2.6-sap-mounts
+    tags:
+      - 2.6-sap-mounts
 
-  - include_role:
-      name:     roles-sap/5.4-web-install
+  - block:
+      - include_role:
+          name:     roles-sap/5.4-web-install
+    tags:
+      - 5.4-web-install
 
 ...
 # /*---------------------------------------------------------------------------8
