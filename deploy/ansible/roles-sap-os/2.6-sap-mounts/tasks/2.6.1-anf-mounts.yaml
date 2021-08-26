@@ -1,0 +1,89 @@
+- name: "Mount: Disable ID mapping (ANF)"
+  ansible.builtin.lineinfile:
+    path:   /etc/idmapd.conf
+    regexp: '^[ #]*Domain = localdomain'
+    line:   'Domain = defaultv4iddomain.com'
+    insertafter: '[General]'
+  loop: 
+    - { tier: 'sapos' }
+  when:     (item.tier == "all" or item.tier == tier) 
+  
+- name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
+  ansible.builtin.shell: |
+                      nfsidmap -c
+  loop: 
+    - { tier: 'dbload' }
+    - { tier: 'app' }
+  when:     (item.tier == "all" or item.tier == tier) 
+  
+  # Mount Filesystem on ANF
+  # This is needed so that we can create the correct directory
+- name:     "Mount: Filesystems on ANF"
+  ansible.builtin.mount:
+    src:    "{{ sap_mnt }}"
+    path:   "saptmp"
+    fstype: "nfs4"
+    opts:   "rw,hard,rsize=65536,wsize=65536,sec=sys,vers=4.1,tcp"
+    state:  mounted
+
+- name: "Mount: Create SAP Directories (ANF)"
+  ansible.builtin.file:
+    path:   "{{ item.path }}"
+    state:  directory
+    mode:   0755
+  loop:
+    - { tier: 'sapos', path: '/saptmp/sapmnt{{ sap_sid|upper }}' }
+    - { tier: 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ascs' }
+    - { tier: 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ers' }
+    - { tier: 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}sys' }
+    - { tier: 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}pas' }
+    - { tier: 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}aas' }
+  when:     (item.tier == "all" or item.tier == tier) 
+
+- name:     "Mount: Unmount filesystems on ANF"
+  ansible.builtin.mount:
+    src:    "{{ sap_mnt }}"
+    path:   "saptmp"
+    fstype: "nfs4"
+    opts:   "rw,hard,rsize=65536,wsize=65536,sec=sys,vers=4.1,tcp"
+    state:  unmounted
+
+- name: "Mount: Delete saptmp (ANF)"
+  ansible.builtin.file:
+    path:   "saptmp"
+    state:  absent
+
+# -name:  Configure Autofs
+
+- name:                 Configure Autofs step 1
+  ansible.builtin.lineinfile:
+    state:              present
+    dest:               /etc/auto.master
+    line:               '/- /etc/auto.direct'
+
+- name:                 Configure Autofs step 2
+  ansible.builtin.file:
+    state:              touch
+    path:               /etc/auto.direct
+    mode:              '0644'
+
+- name: Set the NFS Server name
+  ansible.builtin.set_fact:
+    nfs_server: "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_SCS') | first }}"
+
+- name:                 Configure Autofs step 3
+  ansible.builtin.blockinfile:
+    path: /etc/auto.direct
+    block: |
+              /sapmnt/{{ sap_sid|upper }} -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/sapmnt{{ sap_sid|upper }}
+              /usr/sap/{{ sap_sid|upper }}/SYS -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/usrsap{{ sap_sid|upper }}sys
+              /usr/sap/install -nfsvers=4.1,nobind,sec=sys {{ nfs_server }}:/usr/sap/install
+  register: autofs_configuration_changed
+
+- name: Ensure the Autofs service is restarted 
+  ansible.builtin.systemd:
+    name: autofs
+    state: restarted
+  when: autofs_configuration_changed is changed
+
+# -name:  Restart Autofs

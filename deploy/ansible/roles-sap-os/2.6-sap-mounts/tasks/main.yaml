@@ -1,43 +1,9 @@
 ---
 
-- name: "Mount: Disable ID mapping (ANF)"
-  ansible.builtin.lineinfile:
-    path:   /etc/idmapd.conf
-    regexp: '^[ #]*Domain = localdomain'
-    line:   'Domain = defaultv4iddomain.com'
-    insertafter: '[General]'
-  loop: 
-    - { tier: 'dbload' }
-    - { tier: 'app' }
-  when:     (item.tier == "all" or item.tier == tier) and sap_mnt is defined
-  
-- name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
-  ansible.builtin.shell: |
-                      nfsidmap -c
-  loop: 
-    - { tier: 'dbload' }
-    - { tier: 'app' }
-  when:     (item.tier == "all" or item.tier == tier) and sap_mnt is defined
-  
-  # Mount Filesystem on ANF
-  # This is needed so that we can create the correct directory
-- name:     "Mount: Filesystems on ANF"
-  ansible.builtin.mount:
-    src:    "{{ sap_mnt }}"
-    path:   "sapmnt"
-    fstype: "nfs4"
-    opts:   "rw,hard,rsize=1048576,wsize=1048576,sec=sys,vers=4.1,tcp"
-    state:  mounted
-  when:     sap_mnt is defined
+# Import this task only if the sap_mnt is defined, i.e. ANF is used
+- import_tasks: 2.6.1-anf-mounts.yaml
+  when: sap_mnt is defined
 
-- name: "Mount: Create SAP Directories (ANF)"
-  ansible.builtin.file:
-    path:   "{{ item.path }}"
-    state:  directory
-    mode:   0755
-  loop:
-    - { tier: 'preparation', path: '/sapmnt/{{ sap_sid|upper }}' }
-  when:     (item.tier == "all" or item.tier == tier) and sap_mnt is defined
 
 # Mount Filesystems
 - name:     "Mount Filesystems"
@@ -50,23 +16,36 @@
   vars:
     # Get all the hostnames in <SID>_SCS group and return only the first hostname
     nfs_server:   "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_SCS') | first }}"
-    sap_mntpath:  "{% if sap_mnt is undefined %}{{ nfs_server }}:/sapmnt/{{ sap_sid|upper }}{% else %}{{ sap_mnt }}/{{ sap_sid|upper }}{% endif %}"
   loop: 
     - { tier: 'all',          type: 'xfs',   src: '/dev/vg_sap/lv_usrsap',                         path: '/usr/sap' }
     - { tier: 'preparation',  type: 'xfs',   src: '/dev/vg_sap/lv_usrsapinstall',                  path: '/usr/sap/install' }                # Special Install Structure; Destroy on Completion
-    - { tier: 'preparation',  type: 'xfs',   src: '/dev/vg_sap/lv_sapmnt',                         path: '/sapmnt' }
     - { tier: 'hdb',          type: 'xfs',   src: '/dev/vg_sap/lv_hana_shared',                    path: '/hana/shared' }
     - { tier: 'hdb',          type: 'xfs',   src: '/dev/vg_hana_data/lv_hana_data',                path: '/hana/data' }
     - { tier: 'hdb',          type: 'xfs',   src: '/dev/vg_hana_log/lv_hana_log',                  path: '/hana/log' }
     - { tier: 'hdb',          type: 'xfs',   src: '/dev/vg_hana_backup/lv_hana_backup',            path: '/hana/backup' }
-    - { tier: 'web',          type: 'xfs',   src: '/dev/vg_sap/lv_sapmnt',                         path: '/sapmnt' }
-    - { tier: 'dbload',       type: 'nfs4',  src: '{{ sap_mntpath }}',                             path: '/sapmnt/{{ sap_sid|upper }}' }
-    - { tier: 'app',          type: 'nfs4',  src: '{{ sap_mntpath }}',                             path: '/sapmnt/{{ sap_sid|upper }}' }
+  when:         (item.tier == "all" or item.tier == tier) 
+
+
+- name: Set the NFS Server name
+  ansible.builtin.set_fact:
+    nfs_server: "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_SCS') | first }}"
+ 
+# Mount Filesystems
+- name:     "Mount Filesystems when not using ANF"
+  mount:
+    src:    "{{ item.src }}"
+    path:   "{{ item.path }}"
+    fstype: "{{ item.type }}"
+    opts:   defaults
+    state:  mounted
+  loop: 
+    - { tier: 'dbload',       type: 'nfs4',  src: '{{ nfs_server }}:/sapmnt/{{ sap_sid|upper }}',  path: '/sapmnt/{{ sap_sid|upper }}' }
+    - { tier: 'app',          type: 'nfs4',  src: '{{ nfs_server }}:/sapmnt/{{ sap_sid|upper }}',  path: '/sapmnt/{{ sap_sid|upper }}' }
     - { tier: 'hdb',          type: 'nfs4',  src: '{{ nfs_server }}:/usr/sap/install',             path: '/usr/sap/install' }                # Special Install Structure; Destroy on Completion
     - { tier: 'dbload',       type: 'nfs4',  src: '{{ nfs_server }}:/usr/sap/install',             path: '/usr/sap/install' }                # Special Install Structure; Destroy on Completion
     - { tier: 'app',          type: 'nfs4',  src: '{{ nfs_server }}:/usr/sap/install',             path: '/usr/sap/install' }                # Special Install Structure; Destroy on Completion
     - { tier: 'web',          type: 'nfs4',  src: '{{ nfs_server }}:/usr/sap/install',             path: '/usr/sap/install' }                # Special Install Structure; Destroy on Completion
-  when:         item.tier == "all" or
-                item.tier == tier
+  when:         (item.tier == "all" or item.tier == tier) and sap_mnt is not defined
+
 
 ...
