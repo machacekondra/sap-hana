@@ -114,7 +114,6 @@
   when: node_tier != 'scs'
   register: autofs_configuration_changed
 
-
 - name: "Ensure the Autofs service is restarted" 
   ansible.builtin.systemd:
     name: autofs
