@@ -86,4 +86,10 @@
     state: restarted
   when: autofs_configuration_changed is changed
 
+- name: Ensure the Autofs service is restarted 
+  ansible.builtin.systemd:
+    name: nfsserver
+    state: restarted
+  when: autofs_configuration_changed is changed
+
 # -name:  Restart Autofs
