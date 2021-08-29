@@ -308,16 +308,16 @@ else
 fi
 account_set=0
 
-if [ ! -z $subscription ]
+if [ ! -z $STATE_SUBSCRIPTION ]
 then
     echo ""
     echo "#########################################################################################"
     echo "#                                                                                       #"
-    echo -e "#       $cyan Changing the subscription to: $subscription $resetformatting            #"
+    echo -e "#       $cyan Changing the subscription to: $STATE_SUBSCRIPTION $resetformatting            #"
     echo "#                                                                                       #"
     echo "#########################################################################################"
     echo ""
-    $(az account set --sub "${subscription}")
+    $(az account set --sub "${STATE_SUBSCRIPTION}")
     account_set=1
 fi
 
