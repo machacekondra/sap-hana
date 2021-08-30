@@ -5,19 +5,7 @@
 #
 # Acknowledgements: Fergal Mc Carthy, SUSE
 #########################################################################
-#     (( )) -> math mode
-#     $# -> number of params
-#     ${#var_name} -> length of var_name
-#     ${#var_name[@]} -> count elements in the array
-#     : -> if condition
-#     ${varname:-<default_value>} -> if varname is null, use default_value
-#     ${varname:<default_value>} -> if varname is not null but empty string, use default_value
-#     ${varname:+<default_value>} -> if varname is not null and not empty string, use default_value
-#     ${varname:?<error_message>} -> if varname is null, print error_message and exit
-#     example: ${debug:+-d} or ${DEBUG:+--verbose}
-#     ${var:+ ${var}} -> if var is set, substitute with space and var value
-# Acknowledgements: Fergal Mc Carthy, SUSE
-#########################################################################
+
 function save_config_var() {
     local var_name=$1 var_file=$2
     sed -i -e "" -e /$var_name/d "${var_file}"
