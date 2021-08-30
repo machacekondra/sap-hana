@@ -50,7 +50,7 @@
     path:   "{{ item.path }}"
     state:  directory
     group:  sapsys
-    owner: "{{ sap_sid|lower }}~adm"
+    owner: "{{ sap_sid|lower }}adm"
     attributes: "+i"
     mode:   0755
   loop:
