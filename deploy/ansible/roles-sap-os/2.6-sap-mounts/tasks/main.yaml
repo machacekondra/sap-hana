@@ -4,7 +4,6 @@
 - import_tasks: 2.6.1-anf-mounts.yaml
   when: sap_mnt is defined
 
-
 # Mount Filesystems
 - name:     "Mount Filesystems"
   mount:

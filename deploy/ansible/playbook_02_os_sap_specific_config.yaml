@@ -8,6 +8,7 @@
 - hosts:          "{{ sap_sid|upper }}_DB  :
                    {{ sap_sid|upper }}_SCS :
                    {{ sap_sid|upper }}_PAS :
+                   {{ sap_sid|upper }}_ERS :
                    {{ sap_sid|upper }}_APP :
                    {{ sap_sid|upper }}_WEB"
 
@@ -47,6 +48,12 @@
     tags:
       - 1.5-disk-setup
 
+
+  - block:
+    - include_role:
+        name:     roles-sap-os/2.5-sap-users
+    tags:
+      - 2.5-sap-users
 
   - block:
     - include_role:

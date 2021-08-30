@@ -44,6 +44,7 @@ sapsys_gid:                   2000
 scs_hostname:                 ""
 scs_instance_number:          "00"                                                      # SAP Install
 sidadm_uid:                   2000
+hdbadm_uid:                   2200
 scs_lb_ip:                    ""                                                        # SAP HA   
 db_lb_ip:                     ""                                                        # SAP HA
 sap_mnt:                      ""                                                        # ANF  

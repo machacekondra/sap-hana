@@ -20,8 +20,33 @@
         state: restarted
     - name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
       ansible.builtin.shell: |
+                      sleep 10
                       nfsidmap -c
+
   when: autofs_mapping_changed is changed 
+
+- name: "Mount: Create /saptmp (ANF)"
+  ansible.builtin.file:
+    path:        "/saptmp"
+    state:       directory
+
+    # group:       sapsys
+    # owner:       "{{ sap_sid|lower }}adm"
+    # attributes:  "+i"
+
+- name: "Mount: Create SAP Directories (ANF)"
+  ansible.builtin.file:
+    path:        "{{ item.path }}"
+    state:       directory
+    mode:        0755
+  loop:
+    - { tier == 'sapos', path: '/saptmp/sapmnt{{ sap_sid|upper }}' }
+    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ascs' }
+    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ers' }
+    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}sys' }
+    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}pas' }
+    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}aas' }
+  when:     tier == 'sapos' and node_tier == 'scs'
 
   # Mount Filesystem on ANF
   # This is needed so that we can create the correct directory
@@ -44,23 +69,6 @@
         name: rpcbind
         state: restarted
 
-
-- name: "Mount: Create SAP Directories (ANF)"
-  ansible.builtin.file:
-    path:   "{{ item.path }}"
-    state:  directory
-    group:  sapsys
-    owner: "{{ sap_sid|lower }}adm"
-    attributes: "+i"
-    mode:   0755
-  loop:
-    - { tier == 'sapos', path: '/saptmp/sapmnt{{ sap_sid|upper }}' }
-    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ascs' }
-    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ers' }
-    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}sys' }
-    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}pas' }
-    - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}aas' }
-  when:     tier == 'sapos' and node_tier == 'scs'
 
 - name:     "Mount: Unmount filesystems (ANF)"
   ansible.builtin.mount:
@@ -93,7 +101,6 @@
     opts:   "rw,hard,rsize=65536,wsize=65536,sec=sys,vers=4.1,tcp"
     state:  absent
   when:     tier == 'sapos' and node_tier == 'scs'
-
 
 # Configure Autofs
 - name:                 "Mount: Create auto.master"
@@ -147,3 +154,18 @@
     state: restarted
   when: distro_id == "redhat8"
 
+# Configure shared direcotries
+- name:     "Create the shared directories for SAP installation (ANF)"
+  ansible.builtin.file:
+    path:        "{{item.path}}"
+    state:       directory
+    #group:       sapsys
+    #owner:       "{{ sap_sid|lower }}adm"
+    attributes:  +i
+  when: tier == 'sapos'
+  loop:
+    - { tier: 'sapos', path: '/sapmnt/{{ sap_sid|upper }}'     }
+    - { tier: 'sapos', path: '/sapmnt/{{ sap_sid|upper }}/sys' }
+  #TODO: Add to loop in near future
+    #sudo mkdir -p /usr/sap/QAS/ASCS00
+    #sudo mkdir -p /usr/sap/QAS/ERS01
