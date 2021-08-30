@@ -3,33 +3,42 @@
   ansible.builtin.set_fact:
     nfs_server: "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_SCS') | first }}"
 
-
-
 - name: "Mount: Disable ID mapping (ANF)"
   ansible.builtin.lineinfile:
     path:   /etc/idmapd.conf
     regexp: '^[ #]*Domain = localdomain'
-    line:   'Domain = defaultv4iddomain.com'
+    line:   ' Domain = defaultv4iddomain.com'
     insertafter: '[General]'
   register: autofs_mapping_changed
   when:     tier == 'sapos'
-  
-- name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
-  ansible.builtin.shell: |
-                      nfsidmap -c
-  when: autofs_mapping_changed is changed
+
+- name: "Mount: Ensure the rpcbind service is restarted" 
+  ansible.builtin.systemd:
+    name: rpcbind
+    state: restarted
+  when: autofs_mapping_changed is changed 
 
 
   # Mount Filesystem on ANF
   # This is needed so that we can create the correct directory
 - name:     "Mount: Filesystems on ANF"
-  ansible.builtin.mount:
-    src:    "{{ sap_mnt }}"
-    path:   "/saptmp"
-    fstype: "nfs4"
-    opts:   "rw,hard,rsize=65536,wsize=65536,sec=sys,vers=4.1,tcp"
-    state:  mounted
+  block:
+    - name:     "Mount: Filesystems on ANF"
+      ansible.builtin.mount:
+        src:    "{{ sap_mnt }}"
+        path:   "/saptmp"
+        fstype: "nfs4"
+        opts:   "rw,hard,rsize=65536,wsize=65536,sec=sys,vers=4.1,tcp"
+        state:  mounted
   when:     tier == 'sapos' and node_tier == 'scs'
+  rescue:
+    - name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
+      ansible.builtin.shell: |
+                      nfsidmap -c
+    - name: "Mount: Ensure the rpcbind service is restarted" 
+      ansible.builtin.systemd:
+        name: rpcbind
+        state: restarted
 
 
 - name: "Mount: Create SAP Directories (ANF)"
@@ -79,8 +88,7 @@
   when:     tier == 'sapos' and node_tier == 'scs'
 
 
-# -name:  Configure Autofs
-
+# Configure Autofs
 - name:                 "Mount: Create auto.master"
   ansible.builtin.lineinfile:
     state:              present
@@ -101,6 +109,7 @@
     block: |
               /sapmnt/{{ sap_sid|upper }} -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/sapmnt{{ sap_sid|upper }}
               /usr/sap/{{ sap_sid|upper }}/SYS -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/usrsap{{ sap_sid|upper }}sys
+              #Testing
   when: node_tier == 'scs'
   register: autofs_configuration_changed_scs
   
@@ -111,23 +120,25 @@
               /usr/sap/install -nfsvers=4.1,nobind,sec=sys {{ nfs_server }}:/usr/sap/install
               /sapmnt/{{ sap_sid|upper }} -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/sapmnt{{ sap_sid|upper }}
               /usr/sap/{{ sap_sid|upper }}/SYS -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/usrsap{{ sap_sid|upper }}sys
+              #Testing
   when: node_tier != 'scs'
   register: autofs_configuration_changed
 
-- name: "Ensure the Autofs service is restarted" 
+- name: "Mount: Ensure the Autofs service is restarted" 
   ansible.builtin.systemd:
     name: autofs
     state: restarted
-  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed
+  when: autofs_configuration_changed is changed or autofs_configuration_changed_scs is changed
 
-- name: "Ensure the Autofs service is restarted" 
+- name: "Mount: Ensure the NFS service is restarted" 
   ansible.builtin.systemd:
     name: nfsserver
     state: restarted
-  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed and ( distro_id != "redhat8" )
+  when: (autofs_configuration_changed is changed or autofs_configuration_changed_scs is changed) and ( distro_id != "redhat8" )
 
-- name: "Ensure the Autofs service is restarted RHEL" 
+- name: "Mount: Ensure the NFS service is restarted RHEL" 
   ansible.builtin.systemd:
     name: nfs-server
     state: restarted
-  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed and distro_id == "redhat8"
+  when: (autofs_configuration_changed is changed or autofs_configuration_changed_scs is changed)  and distro_id == "redhat8"
+
