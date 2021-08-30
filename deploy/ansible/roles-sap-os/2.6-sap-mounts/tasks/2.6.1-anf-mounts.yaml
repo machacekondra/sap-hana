@@ -6,18 +6,22 @@
 - name: "Mount: Disable ID mapping (ANF)"
   ansible.builtin.lineinfile:
     path:   /etc/idmapd.conf
-    regexp: '^[ #]*Domain = localdomain'
+    regexp: '^[ #]*Domain = '
     line:   ' Domain = defaultv4iddomain.com'
     insertafter: '[General]'
   register: autofs_mapping_changed
-  when:     tier == 'sapos'
+  when:     tier == 'sapos' 
 
-- name: "Mount: Ensure the rpcbind service is restarted" 
-  ansible.builtin.systemd:
-    name: rpcbind
-    state: restarted
+- name:     "Mount: Ensure the  services is restarted"
+  block:
+    - name: "Mount: Ensure the rpcbind service is restarted" 
+      ansible.builtin.systemd:
+        name: rpcbind
+        state: restarted
+    - name: "Mount: Clear the cache of the nfsidmap daemon (ANF)"
+      ansible.builtin.shell: |
+                      nfsidmap -c
   when: autofs_mapping_changed is changed 
-
 
   # Mount Filesystem on ANF
   # This is needed so that we can create the correct directory
@@ -45,6 +49,9 @@
   ansible.builtin.file:
     path:   "{{ item.path }}"
     state:  directory
+    group:  sapsys
+    owner: "{{ sap_sid|lower }}~adm"
+    attributes: "+i"
     mode:   0755
   loop:
     - { tier == 'sapos', path: '/saptmp/sapmnt{{ sap_sid|upper }}' }
@@ -66,9 +73,9 @@
 
 - name: "Mount: Delete locally created SAP Directories (ANF)"
   ansible.builtin.file:
-    path:   "{{ item.path }}"
-    state:  absent
-    mode:   0755
+    path:       "{{ item.path }}"
+    state:      absent
+    mode:       0755
   loop:
     - { tier == 'sapos', path: '/saptmp/sapmnt{{ sap_sid|upper }}' }
     - { tier == 'sapos', path: '/saptmp/usrsap{{ sap_sid|upper }}ascs' }
@@ -109,7 +116,6 @@
     block: |
               /sapmnt/{{ sap_sid|upper }} -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/sapmnt{{ sap_sid|upper }}
               /usr/sap/{{ sap_sid|upper }}/SYS -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/usrsap{{ sap_sid|upper }}sys
-              #Testing
   when: node_tier == 'scs'
   register: autofs_configuration_changed_scs
   
@@ -120,7 +126,6 @@
               /usr/sap/install -nfsvers=4.1,nobind,sec=sys {{ nfs_server }}:/usr/sap/install
               /sapmnt/{{ sap_sid|upper }} -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/sapmnt{{ sap_sid|upper }}
               /usr/sap/{{ sap_sid|upper }}/SYS -nfsvers=4.1,nobind,sec=sys {{ sap_mnt }}/usrsap{{ sap_sid|upper }}sys
-              #Testing
   when: node_tier != 'scs'
   register: autofs_configuration_changed
 
