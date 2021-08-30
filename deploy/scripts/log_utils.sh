@@ -62,7 +62,7 @@ function __init_log() {
 
 # set log level function
 function set_log_level() {
-    local logger=default curr_log_level 1
+   local logger=default curr_log_level l
     [[ $1 = "-l" ]] && {
         logger=$2
         shift 2 2>/dev/null
