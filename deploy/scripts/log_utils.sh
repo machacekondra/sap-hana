@@ -8,7 +8,7 @@ fi
 
 # only code that executes when lib is sourced should be the init code
 # this is to prevent multiple inits when the script is sourced multiple times
-function __init() {
+function __init_logger() {
     # call init function
     # shellcheck disable=SC1091
     __init_log
@@ -26,27 +26,19 @@ function __init_log() {
     DEBUGLOGFILENAME="debuglog-${DATETIME}.txt"
     PROCESS_OF_LOG="$$"
 
-    if [ -t 1 ]; then
-        # set up colors
-        [[ $color_normal ]] || color_normal="\033[0m"
-        [[ $color_red ]] || color_red="\033[0;31m"
-        [[ $color_green ]] || color_green="\033[0;32m"
-        [[ $color_yellow ]] || color_yellow="\033[0;33m"
-        [[ $color_magenta ]] || color_magenta="\033[0;35m"
-        [[ $color_cyan ]] || color_cyan="\033[0;36m"
-        [[ $color_white ]] || color_white="\033[0;37m"
-    else
-        # no colors when stdout is not a terminal
-        color_normal=""
-        color_red=""
-        color_green=""
-        color_yellow=""
-        color_magenta=""
-        color_cyan=""
-        color_white=""
-    fi
+    # letting colors be defined, use cat, less -R or tail to see the colors
+    # if cat is not displaying colors, then the control characters may not be
+    # intact. Look at the following link for more info:
+    # https://unix.stackexchange.com/questions/262185/display-file-with-ansi-colors
 
-    readonly color_normal color_red color_green color_yellow color_magenta color_cyan color_white
+    # use declare -p to see the variables or declare -xp to see the environment
+    # variables.
+
+    # shellcheck disable=SC2034
+    readonly color_normal="\033[0m" color_red="\033[0;31m" \
+        color_green="\033[0;32m" color_cyan="\033[0;36m" \
+        color_yellow="\033[0;33m" color_magenta="\033[0;35m" \
+        color_white="\033[0;37m" color_bold="\033[1m"
 
     # clear out any old values
     # shellcheck disable=SC2034
@@ -62,7 +54,7 @@ function __init_log() {
 
 # set log level function
 function set_log_level() {
-   local logger=default curr_log_level l
+    local logger=default curr_log_level l
     [[ $1 = "-l" ]] && {
         logger=$2
         shift 2 2>/dev/null
@@ -95,9 +87,11 @@ function _printlog() {
     }
     log_level="${log_levels[$current_log_level]}"
     log_level_set="${log_level_mapper[$logger]}"
+
     #+${BASH_SOURCE/$HOME/\~}@${LINENO}${FUNCNAME:+(${FUNCNAME[0]})}:
-    #+${BASH_SOURCE/$DEPLOYMENT_REPO_PATH/\~}@${LINENO}${FUNCNAME:+(${FUNCNAME[0]})}:
-    who_called="+${BASH_SOURCE[2]}@${BASH_LINENO[1]}:${FUNCNAME[2]}:"
+    #who_called="+${BASH_SOURCE[2]}@${BASH_LINENO[1]}:${FUNCNAME[2]}:"
+    who_called="+${BASH_SOURCE/$DEPLOYMENT_REPO_PATH/\~}@${LINENO}${FUNCNAME:+(${FUNCNAME[0]})}:"
+
     if [[ $log_level_set ]]; then
         ((log_level_set >= log_level)) && {
             printf '%(%Y-%m-%d:%H:%M:%S)T %-7s %s\n' -1 "$current_log_level" "$who_called"
@@ -136,7 +130,7 @@ function _writelog_to_file() {
             fi
             shift
             printf '[%(%Y-%m-%d %H:%M:%S)T] %-7s %s %s\n' -1 "$current_log_level" \
-                "$who_called" "$@" >> "${SCRIPTDIR}/${INFOLOGFILENAME}"
+                "$who_called" "$@" >>"${SCRIPTDIR}/${INFOLOGFILENAME}"
         }
     else
         printf '%(%Y-%m-%d:%H:%M:%S)T %-7s %s\n' -1 WARN \
@@ -191,11 +185,42 @@ log_info_leave() { _printlog INFO "Leaving function ${FUNCNAME[1]}"; }
 log_debug_leave() { _printlog DEBUG "Leaving function ${FUNCNAME[1]}"; }
 log_verbose_leave() { _printlog VERBOSE "Leaving function ${FUNCNAME[1]}"; }
 
+function __list_log_levels() {
+    local i
+    for i in "${!log_levels[@]}"; do
+        printf '%s\n' "$i"
+    done
+}
+
+function __list_available_loggers() {
+    local i
+    for i in "${!log_level_mapper[@]}"; do
+        printf '%s\n' "$i"
+    done
+}
+
+function __list_available_functions() {
+    #typeset -f | awk '/ \(\) $/ && !/^main / { print $1 }'
+    #typeset -f | awk '!/^main[ (]/ && /^[^ {}]+ *\(\)/ { gsub(/[()]/, "", $1); print $1}'
+    local funcRefs
+    funcRefs=$(declare -F -p | cut -d " " -f 3)
+    readonly funcRefs
+    printf "%s\n" "${funcRefs[@]}"
+}
+
+function __list_available_environment_variables(){
+    local envVars
+    envVars=$(declare -xp | grep --perl-regexp \
+                --only-match '(?<=^declare -x )[^=]+')
+    readonly envVars
+    printf "%s\n" "${envVars[@]}"
+}
+
 dump_stack_trace() {
     local frame=0 line func source n=0
     while caller "$frame"; do
         ((frame++))
-    done | while read line func source; do
+    done | while read -r line func source; do
         ((n++ == 0)) && {
             printf 'Encountered a fatal error\n'
         }
@@ -227,7 +252,7 @@ fatal_error() {
     exit_if_error "$ec" "$@"
 }
 
-__init
+__init_logger
 #########################################################################
 #     (( )) -> math mode
 #     $# -> number of params
