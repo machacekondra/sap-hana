@@ -124,5 +124,10 @@
   ansible.builtin.systemd:
     name: nfsserver
     state: restarted
-  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed
+  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed and ( distro_id != "redhat8" )
 
+- name: "Ensure the Autofs service is restarted RHEL" 
+  ansible.builtin.systemd:
+    name: nfs-server
+    state: restarted
+  when: (autofs_configuration_changed or autofs_configuration_changed_scs) is changed and distro_id == "redhat8"
