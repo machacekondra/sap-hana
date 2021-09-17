@@ -1,7 +1,7 @@
 ---
 
 #@TODO - To be able to retrieve SPN credentials(Sub id, tenant id, app id and password) from KeyVault
-#running current playbook with hardcoded credentials to test the playbooks. 
+#running current playbook with hardcoded credentials to test the playbooks.
 - name: Check the fencing agent configuration variables are set
   ansible.builtin.assert:
     that:
@@ -37,13 +37,11 @@
   failed_when: false
 
 - name: Save setting
-  ansible.builtin.set_fact: 
+  ansible.builtin.set_fact:
     cluster_existence_check: "{{ cluster_existence_check_result.rc | int }}"
 
 - name: Check if a cluster has already been prepared
-  ansible.builtin.debug: 
+  ansible.builtin.debug:
     var: cluster_existence_check
 
 ...
-
-

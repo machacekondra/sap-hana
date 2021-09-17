@@ -30,10 +30,9 @@
 
 - name: Show Key Vault
   ansible.builtin.debug:
-    var:                          kv_name
+    var: kv_name
   when:
     - tier == "bom"
-
 
 - name: "BoM Secrets: Retrieve S User details"
   ansible.builtin.command: >-
@@ -56,8 +55,8 @@
 
 - name: Show S User
   ansible.builtin.debug:
-    var:                          SUser
-    verbosity:                    2  
+    var: SUser
+    verbosity: 2
   when:
     - tier == "bom"
 
@@ -69,7 +68,7 @@
       --name "S-Password"
   changed_when: false
   register: keyvault_secret_show_SPassword
-  no_log: true  
+  no_log: true
   when:
     - tier == "bom"
 
@@ -117,8 +116,8 @@
 
 - name: "SPN Secrets:  Fencing agent SPN Client ID"
   ansible.builtin.debug:
-    var:                          sap_fencing_spn_client_id
-    verbosity:                    1
+    var: sap_fencing_spn_client_id
+    verbosity: 1
 
 - name: "SPN Secrets: Retrieve Fencing agent SPN Client ID details"
   command: >-
@@ -133,8 +132,8 @@
 
 - name: "SPN Secrets:  Fencing agent SPN Client ID"
   ansible.builtin.debug:
-    var:                          keyvault_secret_show_fencing_spn_client_id
-    verbosity:                    1
+    var: keyvault_secret_show_fencing_spn_client_id
+    verbosity: 1
   when:
     - tier == "fencing"
 

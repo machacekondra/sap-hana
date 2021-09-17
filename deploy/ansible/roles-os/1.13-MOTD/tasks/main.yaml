@@ -40,32 +40,32 @@
 # Update banners - Overwrite existing ones
 #
 # -------------------------------------+---------------------------------------8
-- name:                 Update motd banners
+- name: Update motd banners
   copy:
-    src:                files/motd
-    dest:               /etc/motd
-    owner:              root
-    group:              root
-    mode:               0644
-  become:               yes
+    src: files/motd
+    dest: /etc/motd
+    owner: root
+    group: root
+    mode: 0644
+  become: true
 
-- name:                 Update issue banners
+- name: Update issue banners
   copy:
-    src:                files/issue
-    dest:               /etc/issue
-    owner:              root
-    group:              root
-    mode:               0644
-  become:               yes
+    src: files/issue
+    dest: /etc/issue
+    owner: root
+    group: root
+    mode: 0644
+  become: true
 
-- name:                 Update issue.net banners
+- name: Update issue.net banners
   copy:
-    src:                files/issue
-    dest:               /etc/issue.net
-    owner:              root
-    group:              root
-    mode:               0644
-  become:               yes
+    src: files/issue
+    dest: /etc/issue.net
+    owner: root
+    group: root
+    mode: 0644
+  become: true
 
 # -------------------------------------+---------------------------------------8
 #
@@ -73,23 +73,23 @@
 # Update printmotd if commented. We do not change it is explicitly set to no
 # Update sshd
 # -------------------------------------+---------------------------------------8
-- name:                 Update PrintMotd when commented 
+- name: Update PrintMotd when commented
   lineinfile:
-    state:              present
-    dest:               /etc/ssh/sshd_config
-    regexp:             '#PrintMotd'
-    line:               'PrintMotd yes'
-  become:               yes
+    state: present
+    dest: /etc/ssh/sshd_config
+    regexp: '#PrintMotd'
+    line: 'PrintMotd yes'
+  become: true
   notify:
     - restart sshd service
 
-- name:                 Update default Banner path 
+- name: Update default Banner path
   lineinfile:
-    state:              present
-    dest:               /etc/ssh/sshd_config
-    regexp:             '#Banner'
-    line:               'Banner /etc/issue.net'
-  become:               yes
+    state: present
+    dest: /etc/ssh/sshd_config
+    regexp: '#Banner'
+    line: 'Banner /etc/issue.net'
+  become: true
   notify:
     - restart sshd service
 

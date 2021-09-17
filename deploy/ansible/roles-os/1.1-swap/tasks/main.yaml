@@ -11,22 +11,21 @@
 # -------------------------------------+---------------------------------------8
 
 
-
-- name:                           "Ensure /mnt/resource directory exists"
+- name: "Ensure /mnt/resource directory exists"
   file:
-    path:                         "/mnt/resource"
-    state:                        directory
-    mode:                         "0755"
+    path: "/mnt/resource"
+    state: directory
+    mode: "0755"
   notify:
     - Restart waagent
 
 
-- name:                           "Ensure waagent file is configured with proper parameters"
+- name: "Ensure waagent file is configured with proper parameters"
   lineinfile:
-    dest:                         /etc/waagent.conf  
-    state:                        "{{ item.state }}"
-    regexp:                       "{{ item.regexp }}"
-    line:                         "{{ item.line }}"
+    dest: /etc/waagent.conf
+    state: "{{ item.state }}"
+    regexp: "{{ item.regexp }}"
+    line: "{{ item.line }}"
   loop:
     # Default values on install
     #     ResourceDisk.Format             = y
@@ -35,11 +34,11 @@
     #     ResourceDisk.EnableSwap         = n
     #     ResourceDisk.SwapSizeMB         = 0
     #     ResourceDisk.MountOptions       = None
-    - { state: 'present',  regexp: 'ResourceDisk.Format=',      line: 'ResourceDisk.Format=y'                                      }
-    - { state: 'present',  regexp: 'ResourceDisk.EnableSwap=',  line: 'ResourceDisk.EnableSwap=y'                                  }
-    - { state: 'present',  regexp: 'ResourceDisk.SwapSizeMB=',  line: 'ResourceDisk.SwapSizeMB={{ swap_size_mb | default(2052) }}' }
+    - {state: 'present', regexp: 'ResourceDisk.Format=', line: 'ResourceDisk.Format=y'}
+    - {state: 'present', regexp: 'ResourceDisk.EnableSwap=', line: 'ResourceDisk.EnableSwap=y'}
+    - {state: 'present', regexp: 'ResourceDisk.SwapSizeMB=', line: 'ResourceDisk.SwapSizeMB={{ swap_size_mb | default(2052) }}'}
   vars:
-    swap_size_mb:                 "{{ (sap_swap|selectattr('tier', 'search', node_tier)|list|first).swap_size_mb }}"
+    swap_size_mb: "{{ (sap_swap|selectattr('tier', 'search', node_tier)|list|first).swap_size_mb }}"
   notify:
     - Restart waagent
 
