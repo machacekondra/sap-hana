@@ -10,7 +10,6 @@
 # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability-rhel#create-sap-hana-cluster-resources
 
 
-
 - name: Optimise the Pacemaker cluster for SAP HANA
   block:
     - name: Enable Maintenance mode for the cluster
@@ -24,8 +23,8 @@
         op stop timeout=300
         op monitor interval=10 timeout=600
         clone clone-max=2 clone-node-max=1 interleave=true
-      register:             SAPHanaTopology
-      failed_when:          SAPHanaTopology.rc > 1
+      register: SAPHanaTopology
+      failed_when: SAPHanaTopology.rc > 1
 
     - name: Ensure the SAP HANA resource is created
       ansible.builtin.shell: >
@@ -41,7 +40,7 @@
         op demote timeout={{ cluster_SAPHana_timeouts.demote }}
         master notify=true clone-max=2 clone-node-max=1 interleave=true
       when: ansible_distribution_major_version == "7"
-    
+
     - name: Ensure the SAP HANA resource is created
       ansible.builtin.shell: >
         pcs resource create SAPHana_{{ hdb_sid | upper }}_{{ hdb_instance_number }} SAPHana
@@ -75,19 +74,19 @@
 
     - name: Ensure the Virtual IP group is configured to the Master node
       when: ansible_distribution_major_version == "8"
-      shell: pcs constraint colocation add g_ip_{{ hdb_sid | upper }}_{{ hdb_instance_number }} with master SAPHana_{{ hdb_sid | upper }}_{{ hdb_instance_number }}-clone 4000
-    
+      ansible.builtin.shell: pcs constraint colocation add g_ip_{{ hdb_sid | upper }}_{{ hdb_instance_number }} with master SAPHana_{{ hdb_sid | upper }}_{{ hdb_instance_number }}-clone 4000
+
     - name: Disable Maintenance mode for the cluster
       ansible.builtin.shell: pcs property set maintenance-mode=false
 
-    - name: Ensure Cluster Status is ok 
+    - name: Ensure Cluster Status is ok
       ansible.builtin.shell: pcs status | grep '^Online:'
       register: cluster_stable_check
       retries: 30
       delay: 10
       until: "'{{ primary_instance_name }} {{ secondary_instance_name }}' in cluster_stable_check.stdout or '{{ secondary_instance_name }} {{ primary_instance_name }}' in cluster_stable_check.stdout"
 
-    - name: Ensure Cluster resources are started 
+    - name: Ensure Cluster resources are started
       ansible.builtin.shell: pcs status | grep '^Started:'
       register: hana_cluster_resource_check
       retries: 30
@@ -95,5 +94,5 @@
       until: "'{{ primary_instance_name }} {{ secondary_instance.name }}' in cluster_stable_check.stdout or '{{ secondary_instance.name }} {{ primary_instance_name }}' in cluster_stable_check.stdout"
 
   when: ansible_hostname == primary_instance_name
-    
-#End of HANA clustering resources 
+
+#End of HANA clustering resources

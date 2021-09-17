@@ -31,12 +31,12 @@
   ansible.builtin.set_fact:
     sap_hana_fencing_spn_subscription_id: "{{ jsondata | json_query('compute.subscriptionId') }}"
   no_log: true
-    
+
 - name: " Extract ResourceGroup Name "
   ansible.builtin.set_fact:
     resource_group_name: "{{ jsondata | json_query('compute.resourceGroupName') }}"
   no_log: true
-   
+
 - name: Set the primary intance db nic and admin nic IP
   ansible.builtin.set_fact:
     primary_instance_ip_db: "{{ hostvars[primary_instance_name]['ansible_eth0']['ipv4']['address'] }}"
@@ -61,18 +61,24 @@
   block:
     - name: Check HANA DB Version and register
       become_user: "{{ hdb_sid | lower }}adm"
-      shell: /hana/shared/{{ hdb_sid | upper }}/HDB00/HDB version
+      ansible.builtin.shell: /hana/shared/{{ hdb_sid | upper }}/HDB00/HDB version
       register: hdbversion
       changed_when: false
-    - debug:
+
+    - name: Print hdb version output
+      debug:
         var: hdbversion.stdout_lines
 
     - name: capture the Hana DB version
       set_fact:
         hdb_version: "{{ hdbversion.stdout_lines.1.split().1 }}"
-    - debug:
+
+    - name: Print hdb version
+      debug:
         var: hdb_version
-    - debug:
+
+    - name: Print hdb version prefix
+      debug:
         var: hdb_version[0:2]
 
 # /*---------------------------------------------------------------------------8

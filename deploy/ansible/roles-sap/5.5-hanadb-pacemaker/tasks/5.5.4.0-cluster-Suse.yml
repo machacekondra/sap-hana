@@ -4,7 +4,6 @@
 # Ref: https://documentation.suse.com/sle-ha/12-SP4/html/SLE-HA-install-quick/index.html
 # Ref: https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/sap-hana-high-availability
 
-  
 
 - name: Ensure the Cluster STONITH is configured
   when: inventory_hostname == primary_instance_name
@@ -24,7 +23,8 @@
         crm configure rsc_defaults \$id="rsc-options"
         resource-stickiness="1000"
         migration-threshold="5000"
-    # Operation Default recommendation from section 5.3.1 in https://www.suse.com/media/white-paper/suse_linux_enterprise_server_for_sap_applications_12_sp1.pdf#page=26
+    # Operation Default recommendation from section 5.3.1 in
+    # https://www.suse.com/media/white-paper/suse_linux_enterprise_server_for_sap_applications_12_sp1.pdf#page=26
     - name: Ensure the Operation Defaults are configured
       ansible.builtin.shell: >
         crm configure op_defaults \$id="op-options"
@@ -38,8 +38,8 @@
         op start interval="0" timeout="600"
         op stop interval="0" timeout="300"
         params SID="{{ hdb_sid | upper }}" InstanceNumber="{{ hdb_instance_number }}"
-      register:             SAPHanaTopology
-      failed_when:          SAPHanaTopology.rc > 1
+      register: SAPHanaTopology
+      failed_when: SAPHanaTopology.rc > 1
 
 
     - name: Ensure SAP HANA Topology clone set resource is configured
@@ -87,7 +87,7 @@
     - name: Ensure SAP HANA azure-lb resource agent is configured
       ansible.builtin.shell: >
         crm configure primitive rsc_nc_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }} azure-lb port=625{{ hdb_instance_number }}
-        meta resource-stickiness=0     
+        meta resource-stickiness=0
     - name: Ensure Group IP Address resource is configured
       ansible.builtin.shell: >
         crm configure group g_ip_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }}
