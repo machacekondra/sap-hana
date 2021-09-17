@@ -64,4 +64,3 @@
           vars:
             ssfs_file_path: "{{ path_xsa_ssfs_key }}"
   when: not hana_system_replication_enabled
-

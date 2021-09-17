@@ -21,10 +21,10 @@
 
     - name: HSR - Ensure the Public SSH key is stored in a variable
       ansible.builtin.shell: cat ~/.ssh/id_rsa.pub
-      register: "public_ssh_key" 
+      register: "public_ssh_key"
       changed_when: false
 
-    - name: "HSR - Show key {{ ansible_hostname }}" 
+    - name: "HSR - Show key {{ ansible_hostname }}"
       ansible.builtin.debug:
         var: public_ssh_key.stdout
         verbosity: 4

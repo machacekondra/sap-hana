@@ -55,15 +55,18 @@
       ansible.builtin.shell: /hana/shared/{{ hdb_sid | upper }}/HDB00/HDB version
       register: hdbversion
       changed_when: false
-    - debug:
+    - name: Print hdb version
+      debug:
         var: hdbversion.stdout_lines
 
     - name: HSR - capture the Hana DB version
       ansible.builtin.set_fact:
         hdb_version: "{{ hdbversion.stdout_lines.1.split().1 }}"
-    - debug:
+    - name: Print hdb version
+      debug:
         var: hdb_version
-    - debug:
+    - name: Print hdb version prefix
+      debug:
         var: hdb_version[0:2]
   when: ansible_hostname == primary_instance_name
 

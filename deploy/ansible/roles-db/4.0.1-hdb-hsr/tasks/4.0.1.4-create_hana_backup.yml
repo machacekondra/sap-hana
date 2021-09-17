@@ -5,6 +5,7 @@
     path: "{{ hdb_sid_backup_dir }}"
     state: directory
     owner: "{{ hdb_sid_admin_user }}"
+    mode: 0755
 
 - name: HSR - Ensure backup is taken on primary node
   # If HSR is already enabled, we don't need to do this
