@@ -6,7 +6,7 @@
 ---
 # -------------------------------------+---------------------------------------8
 #
-# <Comment Header> 
+# <Comment Header>
 #
 # -------------------------------------+---------------------------------------8
 # TODO: 20210127 Review
@@ -44,11 +44,10 @@
 
 # TODO: Fix when statement
 # Currently we only support RHEL-7 or SLES-12
-- name:     "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
-  include_tasks:    "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
-  when:     ansible_os_family|upper == "REDHAT" or
-            ansible_os_family|upper == "SUSE"
-
+- name: "Manual preparation for {{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}"
+  include_tasks: "{{ ansible_os_family | lower }}-{{ ansible_distribution_major_version }}-os_config.yml"
+  when: ansible_os_family|upper == "REDHAT" or
+        ansible_os_family|upper == "SUSE"
 
 
 ...

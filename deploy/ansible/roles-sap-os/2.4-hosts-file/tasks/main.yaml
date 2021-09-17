@@ -8,30 +8,30 @@
 
 # -------------------------------------+---------------------------------------8
 #
-# Description:  Validation for Prerequisites 
+# Description:  Validation for Prerequisites
 #
-- import_tasks:     pre_checks.yaml
+- import_tasks: pre_checks.yaml
 # -------------------------------------+---------------------------------------8
 
 #   OS: hosts file, Entries - /etc/hosts
-- name:           "OS: Common, Entries - /etc/hosts"
+- name: "OS: Common, Entries - /etc/hosts"
   ansible.builtin.blockinfile:
-    path:         /etc/hosts
-    mode:         0644
-    create:       yes
-    backup:       yes
-    state:        present
-    block:        "{{ lookup('file', 'hosts.block') }}"
-    marker:       "# {mark} ANSIBLE MANAGED BLOCK - COMMON"
+    path: /etc/hosts
+    mode: 0644
+    create: true
+    backup: true
+    state: present
+    block: "{{ lookup('file', 'hosts.block') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - COMMON"
 
 
-- name:           "OS: SID, Entries - /etc/hosts"
+- name: "OS: SID, Entries - /etc/hosts"
   ansible.builtin.blockinfile:
-    path:         /etc/hosts
-    mode:         0644
-    create:       yes
-    state:        present
-    block:        "{{ lookup('template', 'hosts.j2') }}"
-    marker:       "# {mark} ANSIBLE MANAGED BLOCK - {{ sap_sid|upper }}"
+    path: /etc/hosts
+    mode: 0644
+    create: true
+    state: present
+    block: "{{ lookup('template', 'hosts.j2') }}"
+    marker: "# {mark} ANSIBLE MANAGED BLOCK - {{ sap_sid|upper }}"
 
 ...
