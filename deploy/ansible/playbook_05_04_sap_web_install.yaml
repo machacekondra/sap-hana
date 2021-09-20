@@ -5,32 +5,43 @@
 # +------------------------------------4--------------------------------------*/
 ---
 
-- hosts: localhost
-  name: Get SAP Password from KeyVault
-  remote_user:    "{{ orchestration_ansible_user }}"
-  become:         false
-  become_user:    root
-  gather_facts:   true
+- hosts:                               localhost
+  name:                                Get SAP Password from KeyVault
+  gather_facts:                        true
   vars_files:
     - vars/ansible-input-api.yaml                               # API Input template with defaults
-
   tasks:
-    - name: Run the misc/passwords role
-      include_role:
-        name:     roles-misc/0.1-passwords
-        public:   true
+
+    - name:                            Remove .step504 flag
+      ansible.builtin.file:
+        path:                          "{{ _workspace_directory }}/.step504"
+        state:                         absent
+
+    - name:                            Include 0.1 passwords role
+      ansible.builtin.include_role:
+        name:                          roles-misc/0.1-passwords
+        public:                        true
       tags:
         - 0.1-passwords
 
 
-- hosts:          "{{ sap_sid|upper }}_WEB"
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |                 Playbook for SAP Web Dispatcher Install                    |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
 
-  name:           SAP Installation - WebDispatcher
-  remote_user:    "{{ orchestration_ansible_user }}"
-  serial:         1                                                             # /usr/sap/install is an NFS and we share SID/instance number - must be ran serially
-  become:         true
-  become_user:    root
-  gather_facts:   true
+
+- hosts:                               "{{ sap_sid|upper }}_WEB"
+
+  name:                                SAP Installation - WebDispatcher
+  remote_user:                         "{{ orchestration_ansible_user }}"
+  serial:                              1                                       # /usr/sap/install is an NFS and we share SID/instance number
+                                                                               # - must be ran serially
+  become:                              true
+  become_user:                         root
+  gather_facts:                        true
+
   vars_files:
     - vars/ansible-input-api.yaml                                               # API Input template with defaults
 
@@ -41,39 +52,46 @@
 # Build the list of tasks to be executed in order here.
 #
 # -------------------------------------+---------------------------------------8
-    - name: Initialize facts
+    - name:                            Set 'web' tier facts
       ansible.builtin.set_fact:
-        tier:     web                                                             # SAP Install phase: Web Dispatcher
-        password_master:    "{{ hostvars.localhost.sap_password }}"
-
-    #- role: sap-users                                             # --> roles-sap/sap-users (playbook_02_os_sap_specific_config)
-    - block:
-        - name: Run sap-os/sap-users
-          include_role:
-            name:     roles-sap-os/2.5-sap-users                          # TODO: Centiq copy (rework done)
+        tier:                          web
+        password_master:               "{{ hostvars.localhost.sap_password }}"
       tags:
-        - 2.5-sap-users
+        - always
+
+# -------------------------------------+---------------------------------------8
+# Role: 5.4 Web Dispatcher Installation
+#
+# Description:
+#
+# -------------------------------------+---------------------------------------8
 
     - block:
-        - name: Run the web-install
-          include_role:
+        - name:                        Include 5.4-web-install
+          ansible.builtin.include_role:
             name:     roles-sap/5.4-web-install
       tags:
         - 5.4-web-install
 
-- hosts: localhost
-  name: Log results
-  remote_user:    "{{ orchestration_ansible_user }}"
-  become:         false
-  become_user:    root
-  gather_facts:   true
+# /*---------------------------------------------------------------------------8
+# |                                                                            |
+# |                       Playbook for SAP Web Logging                         |
+# |                                                                            |
+# +------------------------------------4--------------------------------------*/
+
+
+- hosts:                               localhost
+  name:                                Log results
+  gather_facts:                        true
   vars_files:
     - vars/ansible-input-api.yaml                               # API Input template with defaults
+
   tasks:
-    - name: Ensure step file exists
+    - name:                            Create .step504 flag
       ansible.builtin.file:
-        path: "{{ _workspace_directory }}/.step504"
-        state: touch
+        path:                          "{{ _workspace_directory }}/.step504"
+        state:                         touch
+        mode:                          0755
 
 
 ...
