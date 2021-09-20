@@ -5,6 +5,7 @@
 # TODO: when tier = HANA; put in a block; move to sap specific
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 1
   ansible.builtin.command:    "echo never > /sys/kernel/mm/transparent_hugepage/enabled"
+  changed_when: false
 
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 2
   ansible.builtin.lineinfile:
@@ -14,6 +15,7 @@
 
 - name:     Task Disable Transparent Hugepages & Configure Processor C-States 3
   ansible.builtin.command:    grub2-mkconfig -o /boot/grub2/grub.cfg
+  changed_when: false
 
 ...
 # /*----------------------------------------------------------------------------8

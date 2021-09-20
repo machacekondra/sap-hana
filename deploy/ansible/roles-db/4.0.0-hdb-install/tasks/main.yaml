@@ -90,6 +90,7 @@
 
 - name:                               "SAP HANA: Execute hdblcm"
   ansible.builtin.shell: |
+                                      set -o pipefail
                                       set -o errexit
                                       pwd=$(<{{ dir_params }}/hdbserver_{{ ansible_hostname }}_{{ sap_sid }}_passwords.xml)
                                       echo $pwd | \

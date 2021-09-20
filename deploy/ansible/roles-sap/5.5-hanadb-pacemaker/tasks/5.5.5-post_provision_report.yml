@@ -15,7 +15,7 @@
     msg:                    "{{ cluster_status_report.stdout }}"
 
 - name:                     Check the SBD devices status
-  ansible.builtin.shell:    crm_mon -1 | grep sbd
+  ansible.builtin.shell:    set -o pipefail && crm_mon -1 | grep sbd
   register:                 sbd_status_report
   changed_when:             false
   failed_when:              false

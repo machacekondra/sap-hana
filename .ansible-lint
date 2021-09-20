@@ -11,12 +11,19 @@ exclude_paths:
   - PoC/
   - .github/
 
-skip_list:
+warn_list:
   # FIXME: rename roles to use _ instead of -
   - role-name
 
+  # FIXME: this should be done in separate PR
+  - command-instead-of-shell
+
+  # FIXME: Experimental violations should be fixed in separate PR
+  - experimental
+
+skip_list:
   # Ignored because there is no easier way to do
-  - empty-string-compare 
+  - empty-string-compare
 
   # Following are ignored because of readability:
   - line-length
