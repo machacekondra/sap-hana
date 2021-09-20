@@ -66,7 +66,7 @@
     - import_tasks: start_hana.yml
   when: ansible_hostname == primary_instance_name #and not hana_system_replication_enabled
 
-- name: HSR - Ensure System Replication is configured command 
+- name: HSR - Ensure System Replication is configured command
   ansible.builtin.debug:
     msg: "source ~/.bashrc ;{{ hdbnsutil_command }} -sr_register --remoteHost={{ primary_instance_name }} --remoteInstance={{ hdb_instance_number }} --replicationMode={{ hana_replication_mode }} --operationMode={{ hana_operation_mode }} --name=SITEB"
     verbosity: 4
@@ -90,4 +90,3 @@
 
     - import_tasks: start_hana.yml
   when: ansible_hostname == secondary_instance_name and not hana_system_replication_enabled
-

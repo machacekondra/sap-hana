@@ -145,7 +145,7 @@ packages:
     - { tier: 'ha',    package: 'resource-agents>=4.3',                                     state: 'present' }
     - { tier: 'ha',    package: 'fence-agents>=4.4.0',                                      state: 'present' }
     - { tier: 'ha',    package: 'cloud-netconfig-azure>=1.3',                               state: 'present' }
-  #Assumption: Public_Cloud_Module_x86_64 already available 
+  #Assumption: Public_Cloud_Module_x86_64 already available
     - { tier: 'ha',    package: 'python-azure-mgmt-compute=4.6.2',                          state: 'present' }
     - { tier: 'ha',    package: 'jq',                                                       state: 'present' }
     - { tier: 'ha',    package: 'sap-suse-cluster-connector',         node_tier: 'scs',     state: 'present' }

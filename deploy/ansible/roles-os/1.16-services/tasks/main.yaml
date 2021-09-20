@@ -49,7 +49,7 @@
 - name:             "1.16 - Enable Services : {{ distro_name }}"
   ansible.builtin.service:
     name:           "{{ item }}"
-    enabled:         yes
+    enabled:         true
   loop:             "{{ services_to_process |
                       selectattr('state', 'equalto', 'enabled') |
                       map(attribute='service') |
@@ -67,7 +67,7 @@
 - name:             "1.16 - Disable Services : {{ distro_name }}"
   ansible.builtin.service:
     name:           "{{ item }}"
-    enabled:         no
+    enabled:         false
   loop:           "{{ services_to_process |
                       selectattr('state', 'equalto', 'disabled') |
                       map(attribute='service') |

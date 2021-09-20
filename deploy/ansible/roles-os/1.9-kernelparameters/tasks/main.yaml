@@ -71,7 +71,7 @@
     ignoreerrors:                              true
   loop:                                        "{{ getparamlistforapply }}"
   when:
-          - item.tier in ["all", tier]
+    - item.tier in ["all", tier]
 
 # ----------------------------------------
 # END

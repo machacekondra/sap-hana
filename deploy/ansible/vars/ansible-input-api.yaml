@@ -47,7 +47,7 @@ scs_instance_number:          "00"                                              
 ers_instance_number:          "01"
 sidadm_uid:                   2000
 hdbadm_uid:                   2200
-scs_lb_ip:                    ""                                                        # SAP HA   
+scs_lb_ip:                    ""                                                        # SAP HA
 db_lb_ip:                     ""                                                        # SAP HA
 reinstall:                    false                                                     # Provide a way to override the idempotency flags for SAP tasks
 
@@ -63,7 +63,7 @@ password_db_xsa_admin:        ""
 download_templates:           false
 prometheus:                   false                                                      # Install Prometheus Monitoring Agent
 
-# Keyvault 
+# Keyvault
 deployer_kv_name:             "deployer-kv-name"                                         # Name of secret containing the deployer keyvault name in the workload zone keyvault
 sapbits_location_secret:      "sapbits-location-base-path"                               # Name of secret containing the SAP Binaries storage account container URL
 sapbits_sas_token_secret:     "sapbits-sas-token"                                        # Name of secret containing the SAP Binaries storage account SAS token

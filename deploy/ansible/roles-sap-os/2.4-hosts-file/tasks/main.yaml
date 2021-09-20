@@ -29,7 +29,7 @@
   ansible.builtin.blockinfile:
     path:         /etc/hosts
     mode:         0644
-    create:       yes
+    create:       true
     state:        present
     block:        "{{ lookup('template', 'hosts.j2') }}"
     marker:       "# {mark} ANSIBLE MANAGED BLOCK - {{ sap_sid|upper }}"

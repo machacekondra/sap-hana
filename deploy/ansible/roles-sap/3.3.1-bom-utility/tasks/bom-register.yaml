@@ -9,12 +9,14 @@
 ---
 # -------------------------------------+---------------------------------------8
 #
-# Description:  Check if BOM is Microsoft supplied and register BOM as an object. 
+# Description:  Check if BOM is Microsoft supplied and register BOM as an object.
 #               If not, download from storage account location.
 #
 - name:             Check for Microsoft Supplied BOM ({{ bom_name }})
-  local_action:     stat path=BOM-catalog/{{ bom_name }}/{{ bom_name }}.yaml
+  stat:
+    path:           BOM-catalog/{{ bom_name }}/{{ bom_name }}.yaml
   register:         microsoft_supplied_bom
+  delegate_to:      localhost
 
 
 # If Microsoft supplied BOM found
@@ -22,7 +24,7 @@
   include_vars:
     file:           "{{ microsoft_supplied_bom.stat.path }}"
     name:           bom
-  when:             microsoft_supplied_bom.stat.exists == true
+  when:             microsoft_supplied_bom.stat.exists
 
 # If Microsoft supplied BOM not found
 
@@ -30,7 +32,7 @@
   debug:
     msg:            "{{ sapbits_location_base_path }}/{{ sapbits_bom_files }}/boms/{{ bom_name }}/{{ bom_name }}.yaml{{ sapbits_sas_token }}"
     verbosity:      1
-  when:             microsoft_supplied_bom.stat.exists != true
+  when:             not microsoft_supplied_bom.stat.exists
 
 
 # If Microsoft supplied BOM not found
@@ -48,7 +50,7 @@
       retries:          10
       delay:            6
       delegate_to:      localhost                                               # Causes action to occur on the Ansible Controller
-      become:           yes
+      become:           true
 
     - name:             Register downloaded BOM ({{ bom_name }})
       include_vars:

@@ -13,7 +13,7 @@
         src: "{{ ssfs_file_path }}"
         path: "{{ ssfs_file_path }}.bak"
         state: hard
-      when: ssfs_backup_result.stat.exists == false
+      when: not ssfs_backup_result.stat.exists
 
     - name: HSR - Ensure original {{ ssfs_file_path }} file is removed from the secondary node
       ansible.builtin.file:

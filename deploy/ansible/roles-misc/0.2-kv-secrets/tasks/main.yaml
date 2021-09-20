@@ -57,7 +57,7 @@
 - name: Show S User
   ansible.builtin.debug:
     var:                          SUser
-    verbosity:                    2  
+    verbosity:                    2
   when:
     - tier == "bom"
 
@@ -69,7 +69,7 @@
       --name "S-Password"
   changed_when: false
   register: keyvault_secret_show_SPassword
-  no_log: true  
+  no_log: true
   when:
     - tier == "bom"
 

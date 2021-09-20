@@ -10,4 +10,5 @@ jobs:
         packages: |
           ansible==2.9
           ansible-lint
-    - run: "ansible-lint -v --force-color ${{ github.workspace }}/deploy/ansible/*role*"
+    - run: "ansible-lint -v --force-color"
+      working-directory: ${{ github.workspace }}

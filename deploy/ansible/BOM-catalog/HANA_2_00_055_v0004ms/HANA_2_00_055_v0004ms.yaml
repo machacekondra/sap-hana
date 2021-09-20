@@ -42,7 +42,7 @@ materials:
       extractDir:   CD_HDBSERVER
       creates:      SIGNATURE.SMF
       url:          https://softwaredownloads.sap.com/file/0020000001251872021
-     
+
     - name:         SAP HANA AFL Rev 57.0 only for HANA 2.0 Rev 57
       archive:      IMDB_AFL20_057_0-80001894.SAR
       extract:      true

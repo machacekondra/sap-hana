@@ -64,9 +64,9 @@
     uid:          "{{ item.uid }}"
     group:        "{{ item.group }}"
     password:     "{{ password_master | password_hash('sha512', inventory_hostname) }}"
-    append:       no
+    append:       false
     shell:        /bin/csh
-    create_home:  yes
+    create_home:  true
     home:         "{{ item.home }}"
   loop:
     - { tier: 'sapos',        user: 'sapadm',                   uid: '{{ sapadm_uid }}', group: 'sapsys', home: '/home/sapadm',                 comment: 'SAP Host Agent' }

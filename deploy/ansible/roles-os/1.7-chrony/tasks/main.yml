@@ -40,8 +40,8 @@
           role-os/1.4-packages role has been successfully run before
           this role runs.
   when:
-   # parentheses wrapped to keep ansible parser happy
-   -      ('ntp' in ansible_facts.packages)
+    # parentheses wrapped to keep ansible parser happy
+    -      ('ntp' in ansible_facts.packages)
 
 - name:    Ensure that required packages are installed
   package:
@@ -106,13 +106,14 @@
         regexp:    '^! ((pool|server) .*)$'
         # need to use single quotes here to avoid quoting issues with \1
         line:      '\1'
-        backrefs:  yes
+        backrefs:  true
         state:     present
       when:
         -          ansible_os_family|upper == 'SUSE'
       register:    chrony_conf_updated
 
-    - set_fact:
+    - name: Set chrony facts
+      set_fact:
         chronyd_restart_required: >-
           {{ ((chronyd_restart_required | bool) or
               (chrony_remove_custom_settings is changed) or
@@ -161,7 +162,8 @@
           {% endfor -%}
       register:      chrony_conf_updated
 
-    - set_fact:
+    - name: Set chrony facts
+      set_fact:
         chronyd_restart_required: >-
           {{ ((chronyd_restart_required | bool) or
               (chrony_conf_updated is changed) or

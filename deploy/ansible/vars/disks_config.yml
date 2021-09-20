@@ -108,7 +108,6 @@ logical_volumes:
     fstype:     'xfs'
 
 
-
 # Define a dynamic expression based upon the 'item' fact that can
 # only be used within a loop, that determines the number of PVs
 # in associated with the associated VG.

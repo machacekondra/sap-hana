@@ -13,7 +13,7 @@
 
   name:           Tester
   gather_facts:   false
-  
+
   vars_files:
     - vars/ansible-input-api.yaml                               # API Input template with defaults
 
@@ -21,15 +21,16 @@
   tasks:
 # -------------------------------------+---------------------------------------8
 #
-# Build the list of tasks to be executed in order here. 
+# Build the list of tasks to be executed in order here.
 #
 # -------------------------------------+---------------------------------------8
 
-  - ansible.builtin.set_fact:
-      tier:     hdb
+    - name: Initialize tier
+      ansible.builtin.set_fact:
+        tier:     hdb
 
-  - include_role:
-      name:     roles-misc/0.1-passwords
+    - include_role:
+        name:     roles-misc/0.1-passwords
 
 
 ...

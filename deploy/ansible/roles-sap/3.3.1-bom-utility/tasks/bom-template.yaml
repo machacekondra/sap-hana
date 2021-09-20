@@ -8,7 +8,7 @@
 # TODO: Download to the install directory
 #       Fetch to controller
 #       template to SWPM dir
-#       adjust logic to handle BOMS same way 
+#       adjust logic to handle BOMS same way
 #       use an ansible temp dir on controler
 #
 # - name:             "Download BOM Template: {{ bom_base_name }}"
@@ -64,7 +64,7 @@
 
 #------------------<DEBUGGING>-------------------
 - name:       Parameters
-  debug:  
+  debug:
     msg:
       - "SAP SID              : {{ sap_sid }}"
       - "Instance Number - SCS: {{ scs_instance_number }}"
@@ -78,9 +78,11 @@
 #------------------</DEBUGGING>------------------
 
 
-- name:             Check for Microsoft Supplied BOM ({{ bom_base_name }}) template
-  local_action:     stat path=BOM-catalog/{{ bom_base_name }}/templates/{{ sap_inifile_template }}
-  register:         microsoft_supplied_bom_template
+- name:        Check for Microsoft Supplied BOM ({{ bom_base_name }}) template
+  stat:
+    path:      BOM-catalog/{{ bom_base_name }}/templates/{{ sap_inifile_template }}
+  register:    microsoft_supplied_bom_template
+  delegate_to: localhost
 
 
 # If Microsoft supplied BOM template found
@@ -89,8 +91,8 @@
     src:            "{{ microsoft_supplied_bom_template.stat.path }}"
     dest:           /usr/sap/install/downloads/{{ sap_inifile }}
     mode:           0644
-    force:          yes
-  when:             microsoft_supplied_bom_template.stat.exists == true
+    force:          true
+  when:             microsoft_supplied_bom_template.stat.exists
 
 # If Microsoft supplied BOM template not found
 - name:             Retrieve BOM ({{ bom_base_name }}) template from Storage Account
@@ -105,14 +107,14 @@
       retries:          10
       delay:            6
       delegate_to:      localhost                                               # Causes action to occur on the Ansible Controller
-      become:           no
+      become:           false
 
     - name:             "SAP SCS: deploy SCS Parameter file install template"
       template:
         src:            "{{ inventory_dir }}/{{ sap_inifile_template }}"
         dest:           /usr/sap/install/downloads/{{ sap_inifile }}
         mode:           0644
-        force:          yes
+        force:          true
   when:             microsoft_supplied_bom_template.stat.exists != true
 
 # -------------------------------------+---------------------------------------8

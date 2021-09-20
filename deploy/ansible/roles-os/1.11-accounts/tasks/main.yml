@@ -47,12 +47,12 @@
     group:         "{{ item.group | default(item.name) }}"
     groups:        "{{ item.groups }}"
     shell:         "{{ item.shell | default('/bin/bash') }}"
-    create_home:   yes
+    create_home:   true
     home:          "/home/{{ item.name }}"
     password:      "{{ item.password |
                       password_hash('sha512') }}"
     state:         "{{ item.state | default('present') }}"
-    append:        yes
+    append:        true
   loop:            "{{ admin_users }}"
   loop_control:
     label:         "{{ item.name }}"

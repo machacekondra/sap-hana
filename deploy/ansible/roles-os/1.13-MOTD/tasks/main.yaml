@@ -47,7 +47,7 @@
     owner:              root
     group:              root
     mode:               0644
-  become:               yes
+  become:               true
 
 - name:                 Update issue banners
   copy:
@@ -56,7 +56,7 @@
     owner:              root
     group:              root
     mode:               0644
-  become:               yes
+  become:               true
 
 - name:                 Update issue.net banners
   copy:
@@ -65,7 +65,7 @@
     owner:              root
     group:              root
     mode:               0644
-  become:               yes
+  become:               true
 
 # -------------------------------------+---------------------------------------8
 #
@@ -73,23 +73,23 @@
 # Update printmotd if commented. We do not change it is explicitly set to no
 # Update sshd
 # -------------------------------------+---------------------------------------8
-- name:                 Update PrintMotd when commented 
+- name:                 Update PrintMotd when commented
   lineinfile:
     state:              present
     dest:               /etc/ssh/sshd_config
     regexp:             '#PrintMotd'
     line:               'PrintMotd yes'
-  become:               yes
+  become:               true
   notify:
     - restart sshd service
 
-- name:                 Update default Banner path 
+- name:                 Update default Banner path
   lineinfile:
     state:              present
     dest:               /etc/ssh/sshd_config
     regexp:             '#Banner'
     line:               'Banner /etc/issue.net'
-  become:               yes
+  become:               true
   notify:
     - restart sshd service
 

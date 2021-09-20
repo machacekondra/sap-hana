@@ -11,32 +11,34 @@
 #
 
 ---
-- name:  
+- name: Initialize facts
   ansible.builtin.set_fact:
     sap_inifile:                  "{{ bom_base_name }}-pas-{{ ansible_hostname }}.params"
     sap_inifile_template:         "{{ bom_base_name }}-pas-inifile-param.j2"
 
 
 # Returns bom object
-- include_role:
+- name: Run the bom-register
+  include_role:
     name:                         roles-sap/3.3.1-bom-utility
     tasks_from:                   bom-register
   vars:
     bom_name:                     "{{ bom_base_name }}"
 
 
-- include_role:
+- name: Run the bom-template
+  include_role:
     name:                         roles-sap/3.3.1-bom-utility
     tasks_from:                   bom-template
   vars:
     sap_cd_package_hdbclient:     /usr/sap/install/CD_HDBCLIENT/SAP_HANA_CLIENT
     sap_cd_package_cd1:           /usr/sap/install/CD_EXPORT
-    sap_cd_package_cd2:           
-    sap_cd_package_cd3:           
-    sap_cd_package_cd4:           
-    sap_cd_package_cd5:           
+    sap_cd_package_cd2:
+    sap_cd_package_cd3:
+    sap_cd_package_cd4:
+    sap_cd_package_cd5:
     sap_ciInstanceNumber:         '00'
-    app_instance_number:          
+    app_instance_number:
     sap_ciDialogWPNumber:         12
     sap_ciBtcWPNumber:            8
     sap_installSAPHostAgent:      "false"
@@ -44,7 +46,7 @@
     sap_scs_hostname:             "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_SCS') | first }}"
     sap_db_hostname:              "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_DB')  | first }}"
     sap_ciVirtualHostname:        "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_PAS') | first }}"
-    sap_appVirtualHostname:       
+    sap_appVirtualHostname:
 
 
 # *====================================4=======================================8
@@ -59,10 +61,10 @@
     mode:   0755
 
 - name:               "SAP PAS reset"
-  ansible.builtin.file: 
+  ansible.builtin.file:
     path: /etc/sap_deployment_automation/sap_deployment_pas.txt
     state: absent
-  when: reinstall == true 
+  when: reinstall
 
 - name: SAP PAS install variables
   debug:
