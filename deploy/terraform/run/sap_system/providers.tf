@@ -13,7 +13,11 @@
 */
 
 provider "azurerm" {
-  features {}
+  features { 
+    resource_group {
+      prevent_deletion_if_contains_resources = true
+  }
+}
   subscription_id = local.spn.subscription_id
   client_id       = local.spn.client_id
   client_secret   = local.spn.client_secret

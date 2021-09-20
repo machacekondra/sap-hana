@@ -48,7 +48,7 @@
     sap_ciVirtualHostname:        "{{ query('inventory_hostnames', '{{ sap_sid|upper }}_PAS') | first }}"
     sap_appVirtualHostname:
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint
 
 # *====================================4=======================================8
 #   SAP PAS: Install
@@ -89,6 +89,8 @@
   args:
     chdir:            /usr/sap/install/SWPM
     creates:          /etc/sap_deployment_automation/sap_deployment_pas.txt
+  tags:
+    - skip_ansible_lint
   # Skip when TRUE (test mode)
   # when: not test_new_bom
 # *====================================4=======================================8

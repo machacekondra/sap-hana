@@ -11,6 +11,13 @@ resource "azurerm_resource_group" "resource_group" {
   location = local.region
   tags     = var.infrastructure.tags
 
+  lifecycle {
+    ignore_changes = [
+      tags
+    ]
+  }
+
+
 }
 
 // Imports data of existing resource group

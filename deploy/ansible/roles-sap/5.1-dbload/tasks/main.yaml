@@ -43,7 +43,7 @@
     sap_ciVirtualHostname:
     sap_appVirtualHostname:
   tags:
-  - skip_ansible_lint
+    - skip_ansible_lint
 
 # *====================================4=======================================8
 #   SAP DBLOAD: Install
@@ -82,6 +82,8 @@
   args:
     chdir:                             /usr/sap/install/SWPM
     creates:                           /etc/sap_deployment_automation/sap_deployment_dbload.txt
+  tags:
+    - skip_ansible_lint
 
 ...
 # /*---------------------------------------------------------------------------8

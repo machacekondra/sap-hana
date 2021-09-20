@@ -69,6 +69,7 @@
 
 - name: Ensure the expected quorum votes is set for the cluster
   ansible.builtin.shell: "pcs quorum expected-votes {{ cluster_quorum.expected_votes }}"
+  changed_when: false
 
 - name: Configure the cluster STONITH device on the primary node
   block:

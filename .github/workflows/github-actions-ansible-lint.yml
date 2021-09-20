@@ -8,7 +8,7 @@ jobs:
     - uses: BSFishy/pip-action@v1
       with:
         packages: |
-          ansible==2.9
+          ansible==2.10
           ansible-lint
     - run: "ansible-lint -v --force-color"
       working-directory: ${{ github.workspace }}
