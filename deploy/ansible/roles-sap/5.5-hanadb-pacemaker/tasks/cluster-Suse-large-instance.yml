@@ -7,22 +7,22 @@
   when: inventory_hostname == primary_instance.ip_admin
   block:
     - name: Ensure csync2 is configured
-      ansible.builtin.shell: crm cluster init -y csync2
+      ansible.builtin.command: crm cluster init -y csync2
 
     - name: Ensure corosync is configured
-      ansible.builtin.shell: crm cluster init -y -u corosync
+      ansible.builtin.command: crm cluster init -y -u corosync
 
     - name: Ensure cluster (hdb_{{ sid | upper }}) is configured
-      ansible.builtin.shell: "crm cluster init -y cluster --name 'hdb_{{ sid | upper }}'"
+      ansible.builtin.command: "crm cluster init -y cluster --name 'hdb_{{ sid | upper }}'"
 
 - name: Ensure Secondary node joins the Cluster
   when: inventory_hostname == secondary_instance.ip_admin
   block:
     - name: Ensure the configuration files are synchronised
-      ansible.builtin.shell: "crm cluster join -y -c {{ primary_instance.ip_db }} csync2"
+      ansible.builtin.command: "crm cluster join -y -c {{ primary_instance.ip_db }} csync2"
 
     - name: Ensure the cluster is joined
-      ansible.builtin.shell: "crm cluster join -y -c {{ primary_instance.ip_db }} cluster"
+      ansible.builtin.command: "crm cluster join -y -c {{ primary_instance.ip_db }} cluster"
 
 - name: Ensure HA Cluster password is set to something secure
   user:
@@ -72,7 +72,7 @@
       when: sbd_device.stdout | length > 0
 
     - name: Ensure SBD disk STONITH resource is created
-      ansible.builtin.shell: >
+      ansible.builtin.command: >
         crm configure primitive stonith-sbd stonith:external/sbd \
         params pcmk_delay_max="15" \
         op monitor interval="15" timeout="15"
@@ -88,7 +88,7 @@
         msg: "{{ sbd_report.stdout }}"
 
     - name: Ensure maintenance mode is enabled
-      ansible.builtin.shell: "crm configure property maintenance-mode=true"
+      ansible.builtin.command: "crm configure property maintenance-mode=true"
 
     - name: Ensure CIB Bootstrap Options are set
       ansible.builtin.shell: >
@@ -185,7 +185,7 @@
         msl_SAPHana_{{ sid | upper }}_HDB{{ instance_number }}
 
     - name: Ensure any required cluster resources are cleaned up
-      ansible.builtin.shell: "crm resource cleanup rsc_SAPHana_{{ sid | upper }}_HDB{{ instance_number }}"
+      ansible.builtin.command: "crm resource cleanup rsc_SAPHana_{{ sid | upper }}_HDB{{ instance_number }}"
 
     - name: Ensure maintenance mode is disabled
-      ansible.builtin.shell: "crm configure property maintenance-mode=false"
+      ansible.builtin.command: "crm configure property maintenance-mode=false"

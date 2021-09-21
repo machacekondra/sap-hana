@@ -65,22 +65,22 @@
   when: inventory_hostname == primary_instance_name
   block:
     - name: Ensure csync2 is configured
-      ansible.builtin.shell: crm cluster init -y csync2 --interface eth1
+      ansible.builtin.command: crm cluster init -y csync2 --interface eth1
 
     - name: Ensure corosync is configured
-      ansible.builtin.shell: crm cluster init -y -u corosync --interface eth1
+      ansible.builtin.command: crm cluster init -y -u corosync --interface eth1
 
     - name: Ensure cluster (hdb_{{ hdb_sid | upper }}) is configured
-      ansible.builtin.shell: "crm cluster init -y cluster --name 'hdb_{{ hdb_sid | upper }}' --interface eth1"
+      ansible.builtin.command: "crm cluster init -y cluster --name 'hdb_{{ hdb_sid | upper }}' --interface eth1"
 
 - name: Ensure Secondary node joins the Cluster
   when: inventory_hostname == secondary_instance_name
   block:
     - name: Ensure the configuration files are synchronised
-      ansible.builtin.shell: "crm cluster join -y -c {{ primary_instance_ip_db }} csync2 --interface eth1"
+      ansible.builtin.command: "crm cluster join -y -c {{ primary_instance_ip_db }} csync2 --interface eth1"
 
     - name: Ensure the cluster is joined
-      ansible.builtin.shell: "crm cluster join -y -c {{ primary_instance_ip_db }} cluster --interface eth1"
+      ansible.builtin.command: "crm cluster join -y -c {{ primary_instance_ip_db }} cluster --interface eth1"
 
 - name: Ensure HA Cluster password is set to something secure
   ansible.builtin.user:
@@ -131,7 +131,7 @@
         passwd="{{ sap_hana_fencing_spn_client_pwd }}"
 
     - name: Stonith Timeout Property
-      ansible.builtin.shell: sudo crm configure property stonith-timeout=900
+      ansible.builtin.command: sudo crm configure property stonith-timeout=900
   when: inventory_hostname == primary_instance_name
 
 - name: Ensure Azure scheduled events is configured
@@ -142,13 +142,13 @@
   # WARNING: cib-bootstrap-options: unknown attribute 'hostName_ hostname'
   # These warning messages can be ignored.
     - name:  Ensure Pacemaker resources for the Azure agent is created
-      ansible.builtin.shell: crm configure primitive rsc_azure-events ocf:heartbeat:azure-events op monitor interval=10s
+      ansible.builtin.command: crm configure primitive rsc_azure-events ocf:heartbeat:azure-events op monitor interval=10s
 
     - name: Ensure clone resource azure-events is configure
-      ansible.builtin.shell: crm configure clone cln_azure-events rsc_azure-events
+      ansible.builtin.command: crm configure clone cln_azure-events rsc_azure-events
 
     - name: Ensure maintenance mode is disabled
-      ansible.builtin.shell: "crm configure property maintenance-mode=false"
+      ansible.builtin.command: "crm configure property maintenance-mode=false"
   when: inventory_hostname == primary_instance_name
 
 #END of Generic Packemaker Tasks

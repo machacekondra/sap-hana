@@ -28,24 +28,24 @@
 - name: "Create the cluster on the primary node: {{ primary_instance_name }}"
   block:
     - name: Ensure the cluster can authenticate nodes as hacluster
-      ansible.builtin.shell: "pcs cluster auth {{ primary_instance_name }} {{ secondary_instance_name }} -u hacluster -p {{ password_ha_db_cluster }}"
+      ansible.builtin.command: "pcs cluster auth {{ primary_instance_name }} {{ secondary_instance_name }} -u hacluster -p {{ password_ha_db_cluster }}"
       when: ansible_distribution_major_version == "7"
 
     - name: Ensure the cluster can authenticate nodes as hacluster
-      ansible.builtin.shell: "pcs host auth {{ primary_instance_name }} {{ secondary_instance_name }} -u hacluster -p {{ password_ha_db_cluster }}"
+      ansible.builtin.command: "pcs host auth {{ primary_instance_name }} {{ secondary_instance_name }} -u hacluster -p {{ password_ha_db_cluster }}"
       when: ansible_distribution_major_version == "8"
 
     # Ref https://docs.microsoft.com/en-us/azure/virtual-machines/maintenance-and-updates#maintenance-that-doesnt-require-a-reboot
     - name: Ensure the cluster is created with a token large enough to allow memory preserving maintenance
-      ansible.builtin.shell: "pcs cluster setup --name {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} --token {{ cluster_totem.token }}"
+      ansible.builtin.command: "pcs cluster setup --name {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} --token {{ cluster_totem.token }}"
       when: ansible_distribution_major_version == "7"
 
     - name: Ensure the cluster is created with a token large enough to allow memory preserving maintenance
-      ansible.builtin.shell: "pcs cluster setup {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} totem token={{ cluster_totem.token }}"
+      ansible.builtin.command: "pcs cluster setup {{ hdb_sid | upper }}_cluster {{ primary_instance_name }} {{ secondary_instance_name }} totem token={{ cluster_totem.token }}"
       when: ansible_distribution_major_version == "8"
 
     - name: Ensure the cluster is starting on all nodes
-      ansible.builtin.shell: pcs cluster start --all
+      ansible.builtin.command: pcs cluster start --all
 
     - name: Wait until cluster has stabilised
       ansible.builtin.shell: pcs status | grep '^Online:'
@@ -64,17 +64,17 @@
       when: ansible_distribution_major_version == "8"
 
     - name: Allow Concurrent Fencing
-      ansible.builtin.shell: pcs property set concurrent-fencing=true
+      ansible.builtin.command: pcs property set concurrent-fencing=true
   when: ansible_hostname == primary_instance_name
 
 - name: Ensure the expected quorum votes is set for the cluster
-  ansible.builtin.shell: "pcs quorum expected-votes {{ cluster_quorum.expected_votes }}"
+  ansible.builtin.command: "pcs quorum expected-votes {{ cluster_quorum.expected_votes }}"
   changed_when: false
 
 - name: Configure the cluster STONITH device on the primary node
   block:
     - name: Ensure STONITH timeout is raised
-      ansible.builtin.shell: pcs property set stonith-timeout=900
+      ansible.builtin.command: pcs property set stonith-timeout=900
 
     # This command assumes the Azure VM resource name matches the hostname
     # If this changes, the pcmk_host_map should be used
@@ -114,10 +114,10 @@
       when: ansible_distribution_major_version == "8"
 
     - name: Ensure the STONITH action is set to reboot
-      ansible.builtin.shell: pcs property set stonith-action=reboot
+      ansible.builtin.command: pcs property set stonith-action=reboot
 
     - name: Ensure the STONITH device is enabled
-      ansible.builtin.shell: pcs property set stonith-enabled=true
+      ansible.builtin.command: pcs property set stonith-enabled=true
   when: ansible_hostname == primary_instance_name
 
 

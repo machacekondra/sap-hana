@@ -9,7 +9,7 @@
   when: inventory_hostname == primary_instance_name
   block:
     - name: Ensure maintenance mode is enabled
-      ansible.builtin.shell: "crm configure property maintenance-mode=true"
+      ansible.builtin.command: "crm configure property maintenance-mode=true"
 
     - name: Ensure CIB Bootstrap Options are set
       ansible.builtin.shell: >
@@ -105,7 +105,7 @@
         cln_SAPHanaTopology_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }}
         msl_SAPHana_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }}
     - name: Ensure any required cluster resources are cleaned up
-      ansible.builtin.shell: "crm resource cleanup rsc_SAPHana_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }}"
+      ansible.builtin.command: "crm resource cleanup rsc_SAPHana_{{ hdb_sid | upper }}_HDB{{ hdb_instance_number }}"
 
     - name: Ensure maintenance mode is disabled
-      ansible.builtin.shell: "crm configure property maintenance-mode=false"
+      ansible.builtin.command: "crm configure property maintenance-mode=false"

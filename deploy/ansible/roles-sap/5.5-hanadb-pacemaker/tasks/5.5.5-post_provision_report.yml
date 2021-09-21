@@ -4,8 +4,8 @@
   pause:
     seconds:                 "{{ cluster_status_report_wait_in_s }}"
 
-- name:                      Check the post-provisioning cluster status
-  ansible.builtin.shell:     "{{ cluster_status_cmd[ansible_os_family] }}"
+- name:                     Check the post-provisioning cluster status
+  ansible.builtin.command:  "{{ cluster_status_cmd[ansible_os_family] }}"
   register:                 cluster_status_report
   changed_when:             false
   failed_when:              false

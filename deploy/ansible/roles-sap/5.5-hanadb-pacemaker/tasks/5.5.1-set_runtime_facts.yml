@@ -61,7 +61,7 @@
   block:
     - name: Check HANA DB Version and register
       become_user: "{{ hdb_sid | lower }}adm"
-      ansible.builtin.shell: /hana/shared/{{ hdb_sid | upper }}/HDB00/HDB version
+      ansible.builtin.command: /hana/shared/{{ hdb_sid | upper }}/HDB00/HDB version
       register: hdbversion
       changed_when: false
     - name: Print the HDB version

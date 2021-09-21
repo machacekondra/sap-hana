@@ -20,7 +20,7 @@
       when: not (id_rsa_file_status.stat.exists or id_rsa_file_pub_status.stat.exists)
 
     - name: HSR - Ensure the Public SSH key is stored in a variable
-      ansible.builtin.shell: cat ~/.ssh/id_rsa.pub
+      ansible.builtin.command: cat ~/.ssh/id_rsa.pub
       register: "public_ssh_key"
       changed_when: false
 

@@ -29,7 +29,7 @@
   when: ansible_os_family == 'Suse'
 
 - name: Check if a cluster has already been prepared
-  ansible.builtin.shell: "{{ cluster_status_cmd[ansible_os_family] }}"
+  ansible.builtin.command: "{{ cluster_status_cmd[ansible_os_family] }}"
   register: cluster_existence_check_result
   changed_when: false
   failed_when: false
