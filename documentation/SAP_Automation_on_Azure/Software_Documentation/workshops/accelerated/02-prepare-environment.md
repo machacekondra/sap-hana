@@ -252,7 +252,7 @@
     ```
     <br/>
     
-    For a deployment to **westeurope** use this:
+    
 
 
     ```bash
@@ -270,9 +270,6 @@
           - SPN App Password:
           - SPN Tenant ID:
           - SPN Subscription:
-
-
-For a deployment to **westeurope** use this:
 
     
     Execute

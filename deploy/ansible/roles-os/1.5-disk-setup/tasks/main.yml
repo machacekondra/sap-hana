@@ -65,46 +65,42 @@
 
 # -------------------------------------+---------------------------------------8
 #
-- name:                           Load the disk configuration settings
-  ansible.builtin.include_vars:   disks_config.yml
+- name:                                Load the disk configuration settings
+  ansible.builtin.include_vars:        disks_config.yml
 
-- name:                           "print unique disks"
+- name:                                "Print unique disks"
   ansible.builtin.debug:
-    var:                          disktypes
-    verbosity:                    2
-
-- name:                           "Print volume group details"
-  ansible.builtin.debug:
-    var:                          volume_groups
-    verbosity:                    2
-
+    var:                               
+    - disktypes
+    - volume_groups
+    verbosity:                         2
 
 # -------------------------------------+---------------------------------------8
 #
-- name:                           "Volume Group creation"
+- name:                                "Volume Group creation"
   ansible.builtin.lvg:
-    vg:                           "{{ item.vg }}"
-    pvs:                          "{{ item.pvs }}"
-    pesize:                       4M
-    state:                        present
-  loop:                           "{{ volume_groups }}"
+    vg:                                "{{ item.vg }}"
+    pvs:                               "{{ item.pvs }}"
+    pesize:                            4M
+    state:                             present
+  loop:                                "{{ volume_groups }}"
   when:
     - tier == "sapos"
 
 
 # -------------------------------------+---------------------------------------8
 #
-- name:                           "Logical Volume creation"
+- name:                                "Logical Volume creation"
   ansible.builtin.lvol:
-    lv:                           "{{ item.lv }}"
-    vg:                           "{{ item.vg }}"
-    size:                         "{{ item.size }}"
-    opts:                         "{{ lvol_opts_from_lv_item }}"
-    active:                       true
-    state:                        present
-    shrink:                       false
-    resizefs:                     false
-  loop: "{{ logical_volumes }}"
+    lv:                                "{{ item.lv }}"
+    vg:                                "{{ item.vg }}"
+    size:                              "{{ item.size }}"
+    opts:                              "{{ lvol_opts_from_lv_item }}"
+    active:                            true
+    state:                             present
+    shrink:                            false
+    resizefs:                          false
+  loop:                                "{{ logical_volumes }}"
   when:
     - item.tier in ["all", tier]
     - item.node_tier in ["all", node_tier]
@@ -112,11 +108,11 @@
 
 # -------------------------------------+---------------------------------------8
 #
-- name:                           "Filesystem creation"
+- name:                                "Filesystem creation"
   ansible.builtin.filesystem:
-    dev:                          "{{ dev_path_from_lv_item }}"
-    fstype:                       "{{ item.fstype }}"
-    opts:                         "{{ item.fsopts | default('') }}"
+    dev:                               "{{ dev_path_from_lv_item }}"
+    fstype:                            "{{ item.fstype }}"
+    opts:                              "{{ item.fsopts | default('') }}"
   loop: "{{ logical_volumes }}"
   when:
     - item.tier in ["all", tier]

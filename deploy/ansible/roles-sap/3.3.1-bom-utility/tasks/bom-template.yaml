@@ -89,19 +89,18 @@
 - name:                                Check for Microsoft Supplied BOM ({{ bom_base_name }}) template in archive
   ansible.builtin.stat:
     path:                              BOM-catalog/archives/{{ bom_base_name }}/templates/{{ sap_inifile_template }}
-  register:                            microsoft_supplied_bom_template
+  register:                            microsoft_supplied_bom_template_archive
   delegate_to:                         localhost
-  when:                                not microsoft_supplied_bom_template.stat.exists
 
 
 # If Microsoft supplied BOM template found
 - name:                                "SAP SCS: deploy SCS Parameter file install template"
   ansible.builtin.template:
-    src:                               "{{ microsoft_supplied_bom_template.stat.path }}"
+    src:                               "{% if microsoft_supplied_bom_template.stat.exists %}{{ microsoft_supplied_bom_template.stat.path }}{% else %}{{ microsoft_supplied_bom_template_archive.stat.path }}{% endif %}" 
     dest:                              /usr/sap/install/downloads/{{ sap_inifile }}
     mode:                              0644
     force:                             true
-  when:                                microsoft_supplied_bom_template.stat.exists
+  when:                                microsoft_supplied_bom_template.stat.exists or microsoft_supplied_bom_template_archive.stat.exists
 
 # If Microsoft supplied BOM template not found
 - name:                                Retrieve BOM ({{ bom_base_name }}) template from Storage Account

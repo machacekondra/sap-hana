@@ -50,13 +50,13 @@ packages:
     - { tier: 'sapos', package: 'libatomic',                                                state: 'present' }
     - { tier: 'sapos', package: 'uuidd',                                                    state: 'present' }
     - { tier: 'sapos', package: 'csh',                                                      state: 'present' }
-    #------------------------- Begin - Packages required for Clustering ---------------------------------------8
+    # ------------------------- Begin - Packages required for Clustering ---------------------------------------8
     - { tier: 'ha',    package: 'jq',                                                       state: 'present' }
     - { tier: 'ha',    package: 'pcs',                                                      state: 'present' }
     - { tier: 'ha',    package: 'pacemaker',                                                state: 'present' }
     - { tier: 'ha',    package: 'nmap-ncat',                                                state: 'present' }
     - { tier: 'ha',    package: 'resource-agents-sap-hana',                                 state: 'present' }
-    #------------------------- End - Packages required for Clustering -----------------------------------------8
+    # ------------------------- End - Packages required for Clustering -----------------------------------------8
   redhat7.4:
     # Install Right Version of Azure Fence Agent
     # https://docs.microsoft.com/en-us/azure/virtual-machines/workloads/sap/high-availability-guide-rhel-pacemaker
@@ -113,14 +113,14 @@ packages:
     - { tier: 'sapos', package: 'libatomic',                                                state: 'present' }
     - { tier: 'sapos', package: 'uuidd',                                                    state: 'present' }
     - { tier: 'sapos', package: 'csh',                                                      state: 'present' }
-    #------------------------- Begin - Packages required for Clustering ---------------------------------------8
+    # ------------------------- Begin - Packages required for Clustering ---------------------------------------8
     - { tier: 'ha',    package: 'jq',                                                       state: 'present' }
     - { tier: 'ha',    package: 'pcs',                                                      state: 'present' }
     - { tier: 'ha',    package: 'pacemaker',                                                state: 'present' }
     - { tier: 'ha',    package: 'nmap-ncat',                                                state: 'present' }
     - { tier: 'ha',    package: 'fence-agents-azure-arm',                                   state: 'present' }
     - { tier: 'ha',    package: 'resource-agents-sap-hana',                                 state: 'present' }
-  #------------------------- End - Packages required for Clustering -----------------------------------------8
+  # ------------------------- End - Packages required for Clustering -----------------------------------------8
   redhat8.1:
     - { tier: 'ha',    package: 'fence-agents-azure-arm',                                   state: 'present' }
   redhat8.2:
@@ -139,17 +139,17 @@ packages:
     - { tier: 'sapos', package: 'libstdc++6',                                               state: 'present' }
     - { tier: 'sapos', package: 'libatomic1',                                               state: 'present' }
     - { tier: 'sapos', package: 'uuidd',                                                    state: 'present' }
-  #------------------------- Begin - Packages required for Clustering ------------------------------------8
+  # ------------------------- Begin - Packages required for Clustering ------------------------------------8
     - { tier: 'ha',    package: 'socat',                                                    state: 'present' }
     - { tier: 'ha',    package: 'corosync',                                                 state: 'present' }
     - { tier: 'ha',    package: 'resource-agents>=4.3',                                     state: 'present' }
     - { tier: 'ha',    package: 'fence-agents>=4.4.0',                                      state: 'present' }
     - { tier: 'ha',    package: 'cloud-netconfig-azure>=1.3',                               state: 'present' }
-  #Assumption: Public_Cloud_Module_x86_64 already available
+  # Assumption: Public_Cloud_Module_x86_64 already available
     - { tier: 'ha',    package: 'python-azure-mgmt-compute=4.6.2',                          state: 'present' }
     - { tier: 'ha',    package: 'jq',                                                       state: 'present' }
     - { tier: 'ha',    package: 'sap-suse-cluster-connector',         node_tier: 'scs',     state: 'present' }
-  #-------------------------- End - packages required for Clustering ------------------------------------8
+  # -------------------------- End - packages required for Clustering ------------------------------------8
   suse12.4:
   suse12.5:
   suse15:

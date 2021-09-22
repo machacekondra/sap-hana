@@ -99,7 +99,7 @@
 #   03) Upload files to Azure
 #   Loop through BOM media files
 - name:                                "BOM:{{ bom_name }} Upload files"
-  ansible.builtincommand: >-
+  ansible.builtin.command: >-
                                        az storage blob upload
                                          --account-name {{ sapbits_location_base_path.rpartition('//')[2].split('.')[0] }}
                                          --account-key {{ sapbits_access_key }}

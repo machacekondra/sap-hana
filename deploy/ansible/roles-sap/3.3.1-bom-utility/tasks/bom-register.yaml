@@ -26,16 +26,16 @@
 - name:                                Check for Microsoft Supplied BOM ({{ bom_name }})
   ansible.builtin.stat:
     path:                              BOM-catalog/archives/{{ bom_name }}/{{ bom_name }}.yaml
-  register:                            microsoft_supplied_bom
+  register:                            microsoft_supplied_bom_archive
   delegate_to:                         localhost
-  when:                                not microsoft_supplied_bom.stat.exists
 
 # If Microsoft supplied BOM found
 - name:                                Register Microsoft Supplied BOM {{ bom_name }}
   ansible.builtin.include_vars:
-    file:                              "{{ microsoft_supplied_bom.stat.path }}"
+    file:                              "{% if microsoft_supplied_bom.stat.exists %}{{ microsoft_supplied_bom.stat.path }}{% else %}{{ microsoft_supplied_bom_archive.stat.path }}{% endif %}" 
     name:                              bom
-  when:                                microsoft_supplied_bom.stat.exists
+  when:                                microsoft_supplied_bom.stat.exists or microsoft_supplied_bom_archive.stat.exists
+
 
 # If Microsoft supplied BOM not found
 
