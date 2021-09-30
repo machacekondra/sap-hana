@@ -256,6 +256,7 @@ required_pkgs=(
     apt-transport-https
     lsb-release
     gnupg
+    sshpass
 )
 
 cli_pkgs=(
