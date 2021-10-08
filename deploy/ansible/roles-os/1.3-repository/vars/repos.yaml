@@ -13,6 +13,7 @@
 repos:
   redhat7.9:
   redhat8.2:
+  redhat8.4:
   # do not have any repos that are needed for RedHat at the moment.
   suse15.1:
     - { tier: 'ha', repo: 'https://download.opensuse.org/repositories/home:ngncc/SLE_15_SP1/home:ngncc.repo',           state: 'present'}
